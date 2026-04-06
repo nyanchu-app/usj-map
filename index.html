@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>USJ 待ち合わせナビ</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --red:#E8341C;--gold:#FFD700;--dark:#080c1a;
+  --border:rgba(255,255,255,0.12);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow-x:hidden}
+body{background:var(--dark);color:#fff;font-family:'Noto Sans JP',sans-serif;min-height:100vh}
+
+/* ===== スプラッシュ ===== */
+#splash{
+  position:fixed;inset:0;z-index:9999;
+  overflow:hidden;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:0;
+  transition:opacity .8s ease,transform .8s ease;
+}
+#splash.gone{opacity:0;transform:scale(1.08);pointer-events:none}
+
+/* 夜の空グラデ背景 */
+.sp-bg{
+  position:absolute;inset:0;
+  background:linear-gradient(160deg,#0a1628 0%,#0d2044 35%,#1a1035 65%,#0a0a18 100%);
+}
+/* 星のきらめき */
+.sp-stars{position:absolute;inset:0}
+.sp-star{
+  position:absolute;border-radius:50%;background:#fff;
+  animation:twinkle 2s ease-in-out infinite;
+}
+.sp-star:nth-child(1){width:2px;height:2px;top:15%;left:20%;animation-delay:0s}
+.sp-star:nth-child(2){width:3px;height:3px;top:25%;left:75%;animation-delay:.4s}
+.sp-star:nth-child(3){width:2px;height:2px;top:10%;left:50%;animation-delay:.8s}
+.sp-star:nth-child(4){width:2px;height:2px;top:35%;left:15%;animation-delay:1.2s}
+.sp-star:nth-child(5){width:3px;height:3px;top:20%;left:88%;animation-delay:.6s}
+.sp-star:nth-child(6){width:2px;height:2px;top:8%;left:35%;animation-delay:1s}
+.sp-star:nth-child(7){width:2px;height:2px;top:30%;left:60%;animation-delay:.3s}
+.sp-star:nth-child(8){width:3px;height:3px;top:18%;left:42%;animation-delay:1.5s}
+@keyframes twinkle{0%,100%{opacity:.2;transform:scale(1)}50%{opacity:1;transform:scale(1.5)}}
+
+/* 下部の光の地平線 */
+.sp-horizon{
+  position:absolute;bottom:0;left:0;right:0;height:45%;
+  background:radial-gradient(ellipse at 50% 100%,rgba(255,180,30,.18) 0%,rgba(255,120,0,.08) 40%,transparent 70%);
+}
+
+/* 花火パーティクル */
+.sp-firework{
+  position:absolute;width:6px;height:6px;border-radius:50%;
+  animation:firework 1.2s ease-out forwards;
+  opacity:0;
+}
+.sp-firework:nth-child(1){background:#FFD700;top:20%;left:15%;animation-delay:.5s}
+.sp-firework:nth-child(2){background:#ff6b9d;top:15%;left:80%;animation-delay:.8s}
+.sp-firework:nth-child(3){background:#64b5f6;top:25%;left:45%;animation-delay:1.1s}
+.sp-firework:nth-child(4){background:#FFD700;top:12%;left:65%;animation-delay:.6s}
+.sp-firework:nth-child(5){background:#a78bfa;top:22%;left:30%;animation-delay:.9s}
+@keyframes firework{
+  0%{opacity:1;transform:scale(0)}
+  50%{opacity:1;transform:scale(1)}
+  100%{opacity:0;transform:scale(2.5);box-shadow:0 0 12px currentColor}
+}
+
+/* コンテンツ */
+.sp-content{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:14px}
+
+.sp-deco{
+  font-size:11px;letter-spacing:6px;
+  color:rgba(255,215,0,.6);
+  font-family:'Bebas Neue',cursive;
+  animation:spFadeUp .6s .1s both;
+}
+
+/* USJロゴ：白文字・金枠 */
+.sp-badge{
+  font-family:'Bebas Neue',cursive;font-size:96px;letter-spacing:10px;
+  color:#fff;
+  padding:10px 36px 8px;
+  border-radius:16px;
+  border:3px solid rgba(255,215,0,.7);
+  background:rgba(255,255,255,.06);
+  backdrop-filter:blur(4px);
+  box-shadow:
+    0 0 40px rgba(255,215,0,.2),
+    0 0 80px rgba(255,215,0,.08),
+    inset 0 1px 0 rgba(255,255,255,.2);
+  animation:spBadge .9s cubic-bezier(.34,1.56,.64,1) both;
+  position:relative;overflow:hidden;
+  text-shadow:0 0 30px rgba(255,215,0,.4);
+}
+.sp-badge::after{
+  content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.15),transparent);
+  animation:shine 1.8s .9s ease forwards;
+}
+@keyframes shine{to{left:150%}}
+
+/* 区切り */
+.sp-divider{
+  display:flex;align-items:center;gap:12px;
+  animation:spFadeUp .5s .45s both;
+}
+.sp-divider-line{width:55px;height:1px;background:linear-gradient(90deg,transparent,rgba(255,215,0,.5))}
+.sp-divider-line.r{background:linear-gradient(90deg,rgba(255,215,0,.5),transparent)}
+.sp-divider-icon{font-size:14px;animation:spinStar 3s linear infinite}
+@keyframes spinStar{to{transform:rotate(360deg)}}
+
+.sp-sub{
+  font-size:16px;letter-spacing:5px;color:rgba(255,255,255,.8);
+  font-family:'Bebas Neue',cursive;
+  animation:spFadeUp .6s .55s both;
+}
+.sp-sub2{
+  font-size:10px;letter-spacing:4px;color:rgba(255,215,0,.45);
+  animation:spFadeUp .6s .7s both;
+  margin-top:-6px;
+}
+
+/* プログレスバー */
+.sp-progress{
+  width:140px;height:2px;
+  background:rgba(255,255,255,.1);
+  border-radius:2px;overflow:hidden;
+  margin-top:4px;
+  animation:spFadeUp .5s .75s both;
+}
+.sp-prog-fill{
+  height:100%;width:0;border-radius:2px;
+  background:linear-gradient(90deg,rgba(255,215,0,.6),rgba(255,215,0,1));
+  animation:fillProg 1.8s .75s cubic-bezier(.4,0,.2,1) forwards;
+}
+@keyframes fillProg{to{width:100%}}
+@keyframes spFadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes spBadge{from{opacity:0;transform:scale(.45) translateY(40px)}to{opacity:1;transform:scale(1) translateY(0)}}
+
+/* ===== ヘッダー ===== */
+header{
+  background:linear-gradient(180deg,#0a0a0a 0%,#111 100%);
+  border-bottom:2px solid var(--red);
+  box-shadow:0 2px 24px rgba(232,52,28,0.35);
+  position:sticky;top:0;z-index:200;
+}
+.header-inner{display:flex;align-items:center;justify-content:space-between;padding:10px 14px}
+.h-left{display:flex;align-items:center;gap:10px}
+.h-badge{
+  background:linear-gradient(145deg,#1a2a4a,#0d1a30);
+  font-family:'Bebas Neue',cursive;font-size:26px;letter-spacing:3px;
+  padding:2px 12px 3px;border-radius:6px;
+  border:2px solid rgba(255,215,0,.7);
+  color:#fff;
+  box-shadow:0 0 16px rgba(255,215,0,.2),inset 0 1px 0 rgba(255,255,255,.15);
+  text-shadow:0 0 12px rgba(255,215,0,.4);
+}
+.h-title{line-height:1.3}
+.h-title strong{font-size:14px;font-weight:900;display:block}
+.h-title span{font-size:10px;color:rgba(255,255,255,0.5)}
+.h-pin{font-size:26px;animation:floatPin 2.5s ease-in-out infinite}
+@keyframes floatPin{0%,100%{transform:translateY(0) rotate(-5deg)}50%{transform:translateY(-5px) rotate(5deg)}}
+
+/* ===== マップ ===== */
+.map-wrap{
+  margin:8px 5px 0;border-radius:18px;overflow:hidden;
+  border:1.5px solid rgba(255,215,0,0.2);
+  box-shadow:0 8px 40px rgba(0,0,0,0.7),0 0 0 1px rgba(255,255,255,0.05);
+  position:relative;
+}
+.map-wrap svg{width:100%;height:auto;display:block}
+
+/* パーティクルキャンバス */
+#fx{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+
+.hint{
+  position:absolute;bottom:10px;left:50%;transform:translateX(-50%);
+  background:rgba(0,0,0,0.75);color:rgba(255,255,255,0.75);
+  font-size:11px;padding:5px 14px;border-radius:20px;
+  border:1px solid rgba(255,255,255,0.15);white-space:nowrap;
+  backdrop-filter:blur(6px);transition:opacity 0.5s;pointer-events:none;
+}
+.hint.hide{opacity:0}
+
+.blk{cursor:pointer;transition:transform .4s cubic-bezier(.34,1.56,.64,1),filter .3s}
+.blk .top{transition:filter .3s}
+.blk:active{transform:scale(.93) translateY(4px)!important;transition:transform .1s}
+.blk:not(.sel){
+  filter:drop-shadow(0 4px 8px rgba(0,0,0,.5));
+  transform:translateY(0) scale(1);
+}
+.blk.sel{
+  transform:translateY(-9px) scale(1.04);
+  filter:drop-shadow(0 12px 20px rgba(0,0,0,.8)) drop-shadow(0 4px 10px rgba(0,0,0,.4));
+}
+.blk.sel .top{
+  stroke:var(--gold)!important;stroke-width:3!important;
+  filter:drop-shadow(0 0 20px rgba(255,215,0,1)) drop-shadow(0 0 10px rgba(255,215,0,.6));
+}
+.blk:not(.sel):not(:active){
+  filter:drop-shadow(0 4px 8px rgba(0,0,0,.5)) brightness(.85);
+}
+
+/* ===== パネル ===== */
+.panel{
+  margin:8px 5px 20px;
+  background:linear-gradient(160deg,rgba(12,16,32,0.98),rgba(8,10,24,0.98));
+  border-radius:22px;border:1px solid rgba(255,255,255,0.1);
+  overflow:hidden;display:none;
+  box-shadow:0 12px 48px rgba(0,0,0,0.8);
+}
+.panel.show{display:block;animation:panelUp 0.35s cubic-bezier(0.34,1.2,0.64,1)}
+@keyframes panelUp{from{opacity:0;transform:translateY(20px) scale(0.97)}to{opacity:1;transform:none}}
+
+/* パネルバナー */
+.p-banner{
+  padding:18px 16px;display:flex;align-items:center;gap:14px;
+  position:relative;overflow:hidden;
+}
+.p-banner::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,var(--ac,#333) 0%,transparent 65%);
+  opacity:0.3;
+}
+.p-banner::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--ac,#fff),transparent);
+  opacity:0.3;
+}
+.p-ico{
+  width:58px;height:58px;border-radius:16px;font-size:30px;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(255,255,255,0.08);border:1.5px solid rgba(255,255,255,0.15);
+  position:relative;z-index:1;flex-shrink:0;
+  box-shadow:0 4px 16px rgba(0,0,0,0.4);
+}
+.p-txt{position:relative;z-index:1}
+.p-name{font-size:17px;font-weight:900;line-height:1.35;text-shadow:0 1px 6px rgba(0,0,0,0.6)}
+.p-sub{font-size:12px;color:rgba(255,255,255,0.5);margin-top:3px}
+
+/* スポット */
+.sp-wrap{padding:14px 16px 0}
+.sp-ttl{
+  font-size:11px;font-weight:700;letter-spacing:1.5px;
+  color:rgba(255,255,255,0.4);margin-bottom:10px;
+  display:flex;align-items:center;gap:8px;
+}
+.sp-ttl::after{content:'';flex:1;height:1px;background:rgba(255,255,255,0.1)}
+.spots{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.spot{
+  padding:9px 16px;border-radius:24px;
+  border:1.5px solid rgba(255,255,255,0.18);
+  background:rgba(255,255,255,0.05);
+  font-size:14px;cursor:pointer;color:rgba(255,255,255,0.75);
+  font-family:'Noto Sans JP',sans-serif;
+  transition:all 0.2s;
+}
+.spot:active{transform:scale(0.94)}
+.spot.on{font-weight:700;color:#fff}
+
+/* メッセージ */
+.msg-wrap{padding:0 16px 16px}
+.msg-ttl-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.msg-ttl{font-size:11px;letter-spacing:1.5px;color:rgba(255,255,255,0.35);font-weight:700}
+.edit-btn{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.7);font-size:12px;padding:4px 12px;border-radius:20px;cursor:pointer;font-family:'Noto Sans JP',sans-serif;transition:all .2s}
+.edit-btn.on{background:rgba(255,215,0,.2);border-color:rgba(255,215,0,.5);color:#FFD700}
+.msg{
+  background:rgba(255,255,255,0.04);border-radius:14px;
+  padding:14px 16px;font-size:14px;line-height:1.9;
+  border:1px solid rgba(255,255,255,0.08);
+  color:rgba(255,255,255,0.8);white-space:pre-wrap;
+  width:100%;resize:none;min-height:160px;
+  font-family:'Noto Sans JP',sans-serif;
+  outline:none;-webkit-appearance:none;display:block;
+}
+.msg:not([readonly]){background:rgba(255,255,255,.08);border-color:rgba(255,215,0,.4);caret-color:#FFD700}
+
+/* ボタン */
+.btn-wrap{padding:0 16px 20px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn{
+  padding:16px 8px;border:none;border-radius:16px;
+  font-family:'Noto Sans JP',sans-serif;font-size:15px;font-weight:900;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;
+  transition:transform 0.15s,box-shadow 0.15s;
+  position:relative;overflow:hidden;letter-spacing:0.5px;
+}
+.btn::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:50%;
+  background:rgba(255,255,255,0.12);border-radius:inherit;
+}
+.btn:active{transform:scale(0.95)}
+.btn-line{background:linear-gradient(160deg,#12d64e,#06C755);color:#fff;box-shadow:0 4px 20px rgba(6,199,85,0.35)}
+.btn-copy{background:linear-gradient(160deg,#7289ff,#5865F2);color:#fff;box-shadow:0 4px 20px rgba(88,101,242,0.35)}
+
+/* トースト */
+.toast{
+  position:fixed;bottom:28px;left:50%;
+  transform:translateX(-50%) translateY(80px);
+  background:rgba(15,15,25,0.95);color:#fff;
+  padding:13px 26px;border-radius:28px;font-size:14px;
+  z-index:999;border:1px solid rgba(255,255,255,0.12);
+  backdrop-filter:blur(10px);transition:transform 0.4s cubic-bezier(0.34,1.4,0.64,1);
+  white-space:nowrap;box-shadow:0 8px 32px rgba(0,0,0,0.5);
+}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+@keyframes pinPop{
+  0%{opacity:0;transform:scale(0) translateY(-20px)}
+  65%{transform:scale(1.35) translateY(4px)}
+  100%{opacity:1;transform:scale(1) translateY(0)}
+}
+.pin-anim{animation:pinPop 0.45s cubic-bezier(0.34,1.56,0.64,1) forwards}
+</style>
+</head>
+<body>
+
+<!-- スプラッシュ -->
+<div id="splash">
+  <div class="sp-bg"></div>
+  <div class="sp-stars">
+    <div class="sp-star"></div><div class="sp-star"></div>
+    <div class="sp-star"></div><div class="sp-star"></div>
+    <div class="sp-star"></div><div class="sp-star"></div>
+    <div class="sp-star"></div><div class="sp-star"></div>
+  </div>
+  <div class="sp-horizon"></div>
+  <div class="sp-firework"></div><div class="sp-firework"></div>
+  <div class="sp-firework"></div><div class="sp-firework"></div>
+  <div class="sp-firework"></div>
+  <div class="sp-content">
+    <div class="sp-deco">✦ UNIVERSAL STUDIOS JAPAN ✦</div>
+    <div class="sp-badge">USJ</div>
+    <div class="sp-divider">
+      <div class="sp-divider-line"></div>
+      <div class="sp-divider-icon">⭐</div>
+      <div class="sp-divider-line r"></div>
+    </div>
+    <div class="sp-sub">待ち合わせナビ</div>
+    <div class="sp-sub2">MEET-UP NAVIGATOR</div>
+    <div class="sp-progress"><div class="sp-prog-fill"></div></div>
+  </div>
+</div>
+
+<header>
+  <div class="header-inner">
+    <div class="h-left">
+      <div class="h-badge">USJ</div>
+      <div class="h-title">
+        <strong>待ち合わせナビ</strong>
+        <span>エリアをタップして共有</span>
+      </div>
+    </div>
+    <div class="h-pin">📍</div>
+  </div>
+</header>
+
+<div class="map-wrap" id="mapWrap">
+<canvas id="fx"></canvas>
+<svg viewBox="-10 0 510 540" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <radialGradient id="gGnd" cx="50%" cy="45%" r="55%">
+    <stop offset="0%" stop-color="#2a5230"/>
+    <stop offset="70%" stop-color="#1a3d1e"/>
+    <stop offset="100%" stop-color="#0d2010"/>
+  </radialGradient>
+  <radialGradient id="gLake" cx="35%" cy="30%" r="65%">
+    <stop offset="0%" stop-color="#64b8f8"/>
+    <stop offset="60%" stop-color="#1976d2"/>
+    <stop offset="100%" stop-color="#0d47a1"/>
+  </radialGradient>
+  <linearGradient id="gMin" x1="0" y1="0" x2="0.4" y2="1"><stop offset="0%" stop-color="#fff176"/><stop offset="100%" stop-color="#f57f17"/></linearGradient>
+  <linearGradient id="gSF"  x1="0" y1="0" x2="0.4" y2="1"><stop offset="0%" stop-color="#b9fbc0"/><stop offset="100%" stop-color="#1b5e20"/></linearGradient>
+  <linearGradient id="gJur" x1="0" y1="0" x2="0.4" y2="1"><stop offset="0%" stop-color="#ccff90"/><stop offset="100%" stop-color="#1b5e20"/></linearGradient>
+  <linearGradient id="gAmi" x1="0" y1="0" x2="0.4" y2="1"><stop offset="0%" stop-color="#80d8ff"/><stop offset="100%" stop-color="#01579b"/></linearGradient>
+  <linearGradient id="gWW"  x1="0" y1="0" x2="0.4" y2="1"><stop offset="0%" stop-color="#84ffff"/><stop offset="100%" stop-color="#006064"/></linearGradient>
+  <linearGradient id="gMar" x1="0" y1="0" x2="0.4" y2="1"><stop offset="0%" stop-color="#ff8a80"/><stop offset="100%" stop-color="#b71c1c"/></linearGradient>
+  <linearGradient id="gHP"  x1="0" y1="0" x2="0.4" y2="1"><stop offset="0%" stop-color="#ea80fc"/><stop offset="100%" stop-color="#4a148c"/></linearGradient>
+  <linearGradient id="gWL"  x1="0" y1="0" x2="0.4" y2="1"><stop offset="0%" stop-color="#ff80ab"/><stop offset="100%" stop-color="#880e4f"/></linearGradient>
+  <linearGradient id="gHW"  x1="0" y1="0" x2="0.4" y2="1"><stop offset="0%" stop-color="#ffff8d"/><stop offset="100%" stop-color="#e65100"/></linearGradient>
+  <linearGradient id="gNY"  x1="0" y1="0" x2="0.4" y2="1"><stop offset="0%" stop-color="#d1c4e9"/><stop offset="100%" stop-color="#1a237e"/></linearGradient>
+  <linearGradient id="gEnt" x1="0" y1="0" x2="0.4" y2="1"><stop offset="0%" stop-color="#ffe082"/><stop offset="100%" stop-color="#bf360c"/></linearGradient>
+  <filter id="sh"><feDropShadow dx="2" dy="5" stdDeviation="4" flood-color="rgba(0,0,0,0.55)"/></filter>
+  <filter id="shB"><feDropShadow dx="1" dy="3" stdDeviation="2" flood-color="rgba(0,0,0,0.4)"/></filter>
+</defs>
+
+<!-- グラウンド -->
+<ellipse cx="240" cy="295" rx="218" ry="238" fill="url(#gGnd)"/>
+<!-- 外周リング -->
+<ellipse cx="240" cy="295" rx="218" ry="238" fill="none" stroke="rgba(255,215,0,0.08)" stroke-width="2"/>
+
+<!-- 環状道路 -->
+<ellipse cx="240" cy="288" rx="156" ry="166" fill="none" stroke="#7a6020" stroke-width="18" opacity="0.55"/>
+<ellipse cx="240" cy="288" rx="156" ry="166" fill="none" stroke="#c8a030" stroke-width="10" opacity="0.4"/>
+<ellipse cx="240" cy="288" rx="156" ry="166" fill="none" stroke="#f0d060" stroke-width="4" opacity="0.25"/>
+<ellipse cx="240" cy="288" rx="156" ry="166" fill="none" stroke="#fffde0" stroke-width="1.5" opacity="0.15"/>
+
+<!-- ラグーン -->
+<ellipse cx="240" cy="276" rx="112" ry="100" fill="url(#gLake)" opacity="0.92"/>
+<!-- 水面光 -->
+<ellipse cx="225" cy="258" rx="60" ry="26" fill="rgba(255,255,255,0.12)" transform="rotate(-18,225,258)"/>
+<ellipse cx="256" cy="286" rx="32" ry="13" fill="rgba(255,255,255,0.06)" transform="rotate(12,256,286)"/>
+<!-- 噴水 -->
+<ellipse cx="240" cy="278" rx="12" ry="6" fill="rgba(150,210,255,0.4)"/>
+<line x1="240" y1="272" x2="238" y2="260" stroke="rgba(180,230,255,0.6)" stroke-width="1.5"/>
+<line x1="240" y1="272" x2="244" y2="258" stroke="rgba(180,230,255,0.5)" stroke-width="1.5"/>
+<line x1="240" y1="272" x2="236" y2="255" stroke="rgba(180,230,255,0.4)" stroke-width="1"/>
+<text x="240" y="248" text-anchor="middle" fill="#fff" font-size="13" font-weight="bold" font-family="'Noto Sans JP'" stroke="#0d47a1" stroke-width="3" paint-order="stroke">セントラル</text>
+<text x="240" y="262" text-anchor="middle" fill="rgba(200,230,255,0.85)" font-size="9.5" font-family="'Noto Sans JP'" stroke="#0d47a1" stroke-width="2" paint-order="stroke">ラグーン</text>
+
+<!-- 影レイヤー -->
+<polygon points="163,31 205,18 248,26 272,111 258,116 224,102 192,110 172,80" fill="#000" opacity="0.25" transform="translate(5,9)"/>
+<polygon points="252,28 304,32 344,56 322,136 316,136 292,114 258,110 264,76" fill="#000" opacity="0.25" transform="translate(5,9)"/>
+<polygon points="346,58 386,80 404,124 418,166 413,208 392,216 362,210 358,186 350,183 326,144 320,135 332,98" fill="#000" opacity="0.25" transform="translate(5,9)"/>
+<polygon points="414,211 420,253 403,296 390,326 370,350 346,331 332,311 348,285 350,250 358,232 362,212" fill="#000" opacity="0.25" transform="translate(5,9)"/>
+<polygon points="371,352 352,381 322,406 296,419 272,428 260,394 252,370 282,358 302,340 318,325 332,313" fill="#000" opacity="0.25" transform="translate(5,9)"/>
+<polygon points="252,373 274,431 238,443 202,448 170,445 156,418 154,396 188,396 218,388 236,382" fill="#000" opacity="0.25" transform="translate(5,9)"/>
+<polygon points="154,395 172,401 205,401 238,401 256,371 268,344 260,314 243,299 220,296 196,293 175,304 152,318 147,345 142,368" fill="#000" opacity="0.25" transform="translate(5,9)"/>
+<polygon points="82,368 70,330 74,295 93,294 118,300 134,308 148,343 143,368 132,382 107,378" fill="#000" opacity="0.25" transform="translate(5,9)"/>
+<polygon points="18,260 14,210 26,170 62,175 88,190 82,228 82,265 56,268" fill="#000" opacity="0.25" transform="translate(5,9)"/>
+<polygon points="28,166 42,116 84,81 122,48 170,32 180,80 160,106 137,118 110,140 92,155 87,188 62,178" fill="#000" opacity="0.25" transform="translate(5,9)"/>
+<rect x="22" y="330" width="62" height="52" rx="10" fill="#000" opacity="0.25" transform="translate(5,9)"/>
+
+<!-- ===== エリア本体 ===== -->
+
+<!-- ミニオン -->
+<g class="blk" data-id="minion" onclick="sel(this)">
+  <polygon class="top" points="163,31 205,18 248,26 272,111 258,116 224,102 192,110 172,80" fill="url(#gMin)" stroke="rgba(255,200,0,0.5)" stroke-width="1.5" filter="url(#sh)"/>
+  <!-- ミニオン目 -->
+  <circle cx="205" cy="52" r="7" fill="rgba(255,255,255,0.8)" filter="url(#shB)"/>
+  <circle cx="205" cy="52" r="4" fill="#5d4037"/>
+  <circle cx="205" cy="52" r="2" fill="#1a1a1a"/>
+  <circle cx="207" cy="50" r="1" fill="#fff"/>
+  <text x="217" y="76" text-anchor="middle" fill="#2a1000" font-size="11" font-weight="900" font-family="'Noto Sans JP'" stroke="#ffe57f" stroke-width="3.5" paint-order="stroke">💛ミニオン</text>
+  <text x="217" y="90" text-anchor="middle" fill="#2a1000" font-size="10" font-family="'Noto Sans JP'" stroke="#ffe57f" stroke-width="3" paint-order="stroke">パーク</text>
+</g>
+
+<g class="blk" data-id="sanfrancisco" onclick="sel(this)">
+  <polygon class="top" points="252,28 304,32 344,56 322,136 316,136 292,114 258,110 264,76" fill="url(#gSF)" stroke="rgba(100,220,100,0.5)" stroke-width="1.5" filter="url(#sh)"/>
+  <!-- ゴールデンゲート -->
+  <line x1="268" y1="96" x2="312" y2="96" stroke="#e53935" stroke-width="2.5" opacity="0.75"/>
+  <line x1="276" y1="88" x2="276" y2="104" stroke="#e53935" stroke-width="2" opacity="0.75"/>
+  <line x1="302" y1="88" x2="302" y2="104" stroke="#e53935" stroke-width="2" opacity="0.75"/>
+  <text x="294" y="72" text-anchor="middle" fill="#fff" font-size="10" font-weight="900" font-family="'Noto Sans JP'" stroke="#004d40" stroke-width="4" paint-order="stroke">🌉 サンフランシスコ</text>
+</g>
+
+<g class="blk" data-id="jurassic" onclick="sel(this)">
+  <polygon class="top" points="346,58 386,80 404,124 418,166 413,208 392,216 362,210 358,186 350,183 326,144 320,135 332,98" fill="url(#gJur)" stroke="rgba(120,220,80,0.5)" stroke-width="1.5" filter="url(#sh)"/>
+  <!-- 恐竜シルエット -->
+  <path d="M370,130 Q375,115 385,118 Q392,120 390,128 Q385,124 380,130 Q378,138 374,140Z" fill="rgba(30,80,20,0.7)"/>
+  <circle cx="387" cy="116" r="4" fill="rgba(30,80,20,0.6)"/>
+  <text x="381" y="158" text-anchor="middle" fill="#fff" font-size="12" font-weight="900" font-family="'Noto Sans JP'" stroke="#1b5e20" stroke-width="4" paint-order="stroke">🦕 ジュラシックパーク</text>
+</g>
+
+<g class="blk" data-id="amity" onclick="sel(this)">
+  <polygon class="top" points="414,211 420,253 403,296 390,326 370,350 346,331 332,311 348,285 350,250 358,232 362,212" fill="url(#gAmi)" stroke="rgba(80,200,255,0.5)" stroke-width="1.5" filter="url(#sh)"/>
+  <!-- 波 -->
+  <path d="M340,300 Q348,295 356,300 Q364,305 372,300" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/>
+  <path d="M342,310 Q350,305 358,310 Q366,315 374,310" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+  <text x="375" y="272" text-anchor="middle" fill="#fff" font-size="12" font-weight="900" font-family="'Noto Sans JP'" stroke="#01579b" stroke-width="4" paint-order="stroke">🦈 アミティビレッジ</text>
+</g>
+
+<g class="blk" data-id="waterworld" onclick="sel(this)">
+  <polygon class="top" points="371,352 352,381 322,406 296,419 272,428 260,394 252,370 282,358 302,340 318,325 332,313" fill="url(#gWW)" stroke="rgba(80,240,240,0.5)" stroke-width="1.5" filter="url(#sh)"/>
+  <!-- スタジアム -->
+  <ellipse cx="302" cy="368" rx="22" ry="12" fill="rgba(0,100,120,0.5)" stroke="rgba(100,240,240,0.4)" stroke-width="1.5"/>
+  <ellipse cx="302" cy="365" rx="14" ry="7" fill="rgba(150,255,255,0.2)"/>
+  <text x="325" y="398" text-anchor="middle" fill="#fff" font-size="12" font-weight="900" font-family="'Noto Sans JP'" stroke="#006064" stroke-width="4" paint-order="stroke">💧 ウォーターワールド</text>
+</g>
+
+<g class="blk" data-id="mario" onclick="sel(this)">
+  <polygon class="top" points="252,373 274,431 238,443 202,448 170,445 156,418 154,396 188,396 218,388 236,382" fill="url(#gMar)" stroke="rgba(255,120,120,0.5)" stroke-width="1.5" filter="url(#sh)"/>
+  <text x="209" y="418" text-anchor="middle" fill="#fff" font-size="12" font-weight="900" font-family="'Noto Sans JP'" stroke="#7f0000" stroke-width="4" paint-order="stroke">🍄 ニンテンドーワールド</text>
+</g>
+
+<g class="blk" data-id="hp" onclick="sel(this)">
+  <polygon class="top" points="154,395 172,401 205,401 238,401 256,371 268,344 260,314 243,299 220,296 196,293 175,304 152,318 147,345 142,368" fill="url(#gHP)" stroke="rgba(200,80,255,0.5)" stroke-width="1.5" filter="url(#sh)"/>
+  <!-- ホグワーツ城タワー -->
+  <rect x="178" y="332" width="10" height="28" fill="#6a1b9a"/>
+  <polygon points="174,332 183,318 192,332" fill="#8e24aa"/>
+  <rect x="194" y="338" width="8" height="22" fill="#4a148c"/>
+  <polygon points="190,338 198,326 206,338" fill="#6a1b9a"/>
+  <rect x="240" y="328" width="10" height="30" fill="#7b1fa2"/>
+  <polygon points="236,328 245,313 254,328" fill="#9c27b0"/>
+  <rect x="181" y="340" width="4" height="4" fill="#fff59d" opacity="0.8"/>
+  <rect x="196" y="344" width="3" height="3" fill="#fff59d" opacity="0.7"/>
+  <rect x="243" y="336" width="4" height="4" fill="#fff59d" opacity="0.8"/>
+  <text x="205" y="372" text-anchor="middle" fill="#fff" font-size="12" font-weight="900" font-family="'Noto Sans JP'" stroke="#1a0030" stroke-width="4" paint-order="stroke">⚡ ハリー・ポッター</text>
+</g>
+
+<g class="blk" data-id="wonderland" onclick="sel(this)">
+  <polygon class="top" points="82,368 70,330 74,295 93,294 118,300 134,308 148,343 143,368 132,382 107,378" fill="url(#gWL)" stroke="rgba(255,80,160,0.5)" stroke-width="1.5" filter="url(#sh)"/>
+  <!-- メリーゴーランド -->
+  <circle cx="108" cy="355" r="10" fill="rgba(255,100,150,0.5)" stroke="rgba(255,180,200,0.6)" stroke-width="1.5"/>
+  <polygon points="104,355 108,345 112,355" fill="rgba(255,80,140,0.8)"/>
+  <line x1="100" y1="349" x2="116" y2="361" stroke="rgba(255,200,220,0.5)" stroke-width="1"/>
+  <line x1="100" y1="361" x2="116" y2="349" stroke="rgba(255,200,220,0.5)" stroke-width="1"/>
+  <text x="108" y="325" text-anchor="middle" fill="#fff" font-size="11.5" font-weight="900" font-family="'Noto Sans JP'" stroke="#560027" stroke-width="4" paint-order="stroke">ワンダーランド</text>
+  <text x="108" y="340" text-anchor="middle" fill="#fff" font-size="14" stroke="#560027" stroke-width="3" paint-order="stroke">🐶</text>
+</g>
+
+<g class="blk" data-id="hollywood" onclick="sel(this)">
+  <polygon class="top" points="18,260 14,210 26,170 62,175 88,190 82,228 82,265 56,268" fill="url(#gHW)" stroke="rgba(255,210,50,0.5)" stroke-width="1.5" filter="url(#sh)"/>
+  <!-- ネオンサイン -->
+  <rect x="28" y="205" width="46" height="12" rx="3" fill="rgba(230,80,20,0.7)"/>
+  <text x="51" y="214" text-anchor="middle" fill="#fff" font-size="7.5" font-weight="bold" font-family="'Bebas Neue'" letter-spacing="2">HOLLYWOOD</text>
+  <text x="54" y="232" text-anchor="middle" fill="#2a1000" font-size="12" font-weight="900" font-family="'Noto Sans JP'" stroke="#ffe082" stroke-width="4" paint-order="stroke">🎬 ハリウッドエリア</text>
+</g>
+
+<g class="blk" data-id="newyork" onclick="sel(this)">
+  <polygon class="top" points="28,166 42,116 84,81 122,48 170,32 180,80 160,106 137,118 110,140 92,155 87,188 62,178" fill="url(#gNY)" stroke="rgba(180,140,240,0.5)" stroke-width="1.5" filter="url(#sh)"/>
+  <!-- 自由の女神 -->
+  <rect x="90" y="114" width="8" height="24" fill="#5c6bc0" filter="url(#shB)"/>
+  <polygon points="86,114 94,100 102,114" fill="#7986cb"/>
+  <path d="M88,108 Q94,102 100,108" fill="none" stroke="#FFD700" stroke-width="1.5"/>
+  <!-- スカイライン -->
+  <rect x="60" y="140" width="12" height="30" fill="rgba(70,60,140,0.5)"/>
+  <rect x="74" y="132" width="10" height="38" fill="rgba(80,70,160,0.5)"/>
+  <rect x="115" y="128" width="14" height="36" fill="rgba(70,60,140,0.5)"/>
+  <text x="106" y="96" text-anchor="middle" fill="#fff" font-size="12" font-weight="900" font-family="'Noto Sans JP'" stroke="#0d0030" stroke-width="4" paint-order="stroke">🗽 ニューヨークエリア</text>
+</g>
+
+<g class="blk" data-id="entrance" onclick="sel(this)">
+  <rect class="top" x="22" y="330" width="62" height="52" rx="10" fill="url(#gEnt)" stroke="rgba(255,200,50,0.5)" stroke-width="1.5" filter="url(#sh)"/>
+  <!-- 地球儀 -->
+  <circle cx="53" cy="308" r="14" fill="#1565c0" stroke="#64b5f6" stroke-width="1.5" filter="url(#shB)"/>
+  <ellipse cx="53" cy="308" rx="14" ry="6" fill="none" stroke="#90caf9" stroke-width="1"/>
+  <line x1="53" y1="294" x2="53" y2="322" stroke="#90caf9" stroke-width="1"/>
+  <text x="53" y="313" text-anchor="middle" fill="#fff" font-size="11" font-family="'Noto Sans JP'">🌍</text>
+  <text x="53" y="362" text-anchor="middle" fill="#fff" font-size="12" font-weight="900" font-family="'Noto Sans JP'" stroke="#7a2e00" stroke-width="4" paint-order="stroke">🎪 エントランス</text>
+</g>
+
+<!-- 入口への道 -->
+<rect x="44" y="382" width="18" height="44" rx="4" fill="#c8a030" opacity="0.55"/>
+<rect x="51" y="382" width="4" height="44" fill="rgba(255,255,255,0.15)"/>
+<text x="53" y="440" text-anchor="middle" fill="#fff" font-size="10" font-family="'Noto Sans JP'" font-weight="700" stroke="#000" stroke-width="3" paint-order="stroke">↓ ユニバーサルシティ駅</text>
+
+<!-- ピン -->
+<g id="pin" style="display:none">
+  <circle id="pinRing2" cx="0" cy="0" r="28" fill="none" stroke="rgba(255,215,0,0.3)" stroke-width="2"/>
+  <circle id="pinRing1" cx="0" cy="0" r="20" fill="rgba(255,215,0,0.15)" stroke="rgba(255,215,0,0.5)" stroke-width="1.5"/>
+  <text id="pinTxt" x="0" y="0" text-anchor="middle" dominant-baseline="central" font-size="22">📍</text>
+</g>
+
+<!-- コンパス -->
+<g transform="translate(447,42)">
+  <circle r="21" fill="rgba(0,0,0,0.7)" stroke="rgba(255,215,0,0.3)" stroke-width="1.5"/>
+  <polygon points="0,-14 4,0 0,5 -4,0" fill="#E8341C"/>
+  <polygon points="0,14 4,0 0,-5 -4,0" fill="rgba(255,255,255,0.35)"/>
+  <circle r="3.5" fill="#fff" opacity="0.9"/>
+  <text y="-6" text-anchor="middle" fill="#E8341C" font-size="9" font-weight="bold" font-family="'Bebas Neue'">N</text>
+</g>
+</svg>
+<div class="hint" id="hint">👆 エリアをタップして場所を共有</div>
+</div>
+
+<!-- パネル -->
+<div class="panel" id="panel">
+  <div class="p-banner" id="pBanner">
+    <div class="p-ico" id="pIco"></div>
+    <div class="p-txt">
+      <div class="p-name" id="pName"></div>
+      <div class="p-sub" id="pSub"></div>
+    </div>
+  </div>
+  <div class="sp-wrap">
+    <div class="sp-ttl">待ち合わせスポット（1つ選択）</div>
+    <div class="spots" id="spots"></div>
+  </div>
+  <div class="msg-wrap">
+    <div class="msg-ttl-row">
+      <div class="msg-ttl">送信メッセージ</div>
+      <button class="edit-btn" id="editBtn" onclick="toggleEdit()">&#x270F;&#xFE0F; 編集</button>
+    </div>
+    <textarea class="msg" id="msg" readonly></textarea>
+  </div>
+  <div class="btn-wrap">
+    <button class="btn btn-line" onclick="shareLine()">💬 LINEで送る</button>
+    <button class="btn btn-copy" onclick="copyMsg()">📋 コピーして共有</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// \u30B9\u30D7\u30E9\u30C3\u30B7\u30E5
+setTimeout(()=>{
+  document.getElementById('splash').classList.add('gone');
+  setTimeout(()=>document.getElementById('splash').remove(),700);
+},1800);
+
+const D={
+  entrance:{name:'\uD83C\uDFAA \u30A8\u30F3\u30C8\u30E9\u30F3\u30B9',sub:'\u6B63\u9762\u30B2\u30FC\u30C8\u30FB\u5730\u7403\u5100\u524D',color:'#e65100',icon:'\uD83C\uDFAA',cx:53,cy:356,
+    spots:['\u6B63\u9762\u5165\u53E3\u30FB\u5730\u7403\u5100\u524D','\u30B2\u30B9\u30C8\u30B5\u30FC\u30D3\u30B9\u524D','\u30B3\u30A4\u30F3\u30ED\u30C3\u30AB\u30FC\u4ED8\u8FD1','\u30B9\u30BF\u30B8\u30AA\u30FB\u30B9\u30BF\u30FC\u30BA\u30FB\u30EC\u30B9\u30C8\u30E9\u30F3\u524D']},
+  hollywood:{name:'\uD83C\uDFAC \u30CF\u30EA\u30A6\u30C3\u30C9\u30FB\u30A8\u30EA\u30A2',sub:'\u30CF\u30EA\u30C9\u30EA\u30FB\u30B9\u30DA\u30FC\u30B9\u30D5\u30A1\u30F3\u30BF\u30B8\u30FC',color:'#e65100',icon:'\uD83C\uDFAC',cx:54,cy:221,
+    spots:['\u30CF\u30EA\u30A6\u30C3\u30C9\u30FB\u30C9\u30EA\u30FC\u30E0\u524D','\u30B9\u30DA\u30FC\u30B9\u30FB\u30D5\u30A1\u30F3\u30BF\u30B8\u30FC\u524D','\u30E1\u30EB\u30BA\u30FB\u30C9\u30E9\u30A4\u30D6\u30A4\u30F3\u524D','\u30E6\u30CB\u30D0\u30FC\u30B5\u30EB\u30FB\u30B9\u30BF\u30B8\u30AA\u30FB\u30B9\u30C8\u30A2\u524D']},
+  newyork:{name:'\uD83D\uDDFD \u30CB\u30E5\u30FC\u30E8\u30FC\u30AF\u30FB\u30A8\u30EA\u30A2',sub:'\u30B3\u30CA\u30F3\u30FB\u30B0\u30E9\u30DE\u30B7\u30FC\u30D1\u30FC\u30AF',color:'#4527a0',icon:'\uD83D\uDDFD',cx:106,cy:117,
+    spots:['\u540D\u63A2\u5075\u30B3\u30CA\u30F34-D\u30E9\u30A4\u30D6\u30B7\u30E7\u30FC\u524D','\u30B0\u30E9\u30DE\u30B7\u30FC\u30D1\u30FC\u30AF\uFF08\u5674\u6C34\u524D\uFF09','\u30EB\u30A4\u30BANYピザパーラー前','\u30E6\u30CB\u30D0\u30FC\u30B5\u30EB\u30FB\u30B9\u30BF\u30B8\u30AA\u30FB\u30B9\u30FC\u30D9\u30CB\u30A2\u524D']},
+  minion:{name:'\uD83D\uDC9B \u30DF\u30CB\u30AA\u30F3\u30FB\u30D1\u30FC\u30AF',sub:'\u30DF\u30CB\u30AA\u30F3\u30FB\u30CF\u30C1\u30E3\u30E1\u30C1\u30E3\u30FB\u30DF\u30C3\u30B7\u30E7\u30F3',color:'#f57f17',icon:'\uD83D\uDC9B',cx:217,cy:74,
+    spots:['\u30A8\u30EA\u30A2\u5165\u53E3\u524D','\u30CF\u30C1\u30E3\u30E1\u30C1\u30E3\u30FB\u30DF\u30C3\u30B7\u30E7\u30F3\u524D','\u30B9\u30FC\u30D1\u30FC\u30FB\u30B7\u30EA\u30FC\u30FB\u30D5\u30A1\u30F3\u30FB\u30E9\u30F3\u30C9\u524D','\u30DF\u30CB\u30AA\u30F3\u30FB\u30AB\u30D5\u30A7\u524D']},
+  sanfrancisco:{name:'\uD83C\uDF09 \u30B5\u30F3\u30D5\u30E9\u30F3\u30B7\u30B9\u30B3\u30FB\u30A8\u30EA\u30A2',sub:'\u30CF\u30D4\u30CD\u30B9\u30AB\u30D5\u30A7\u30FB\u30EF\u30FC\u30D5\u30AB\u30D5\u30A7',color:'#2e7d32',icon:'\uD83C\uDF09',cx:294,cy:86,
+    spots:['\u30A8\u30EA\u30A2\u5165\u53E3\u524D','\u30CF\u30D4\u30CD\u30B9\u30AB\u30D5\u30A7\u524D','\u30EF\u30FC\u30D5\u30AB\u30D5\u30A7\u524D','\u30D5\u30A3\u30C3\u30B7\u30E3\u30FC\u30DE\u30F3\u30BA\u30FB\u30DE\u30FC\u30B1\u30C3\u30C8\u524D']},
+  jurassic:{name:'\uD83E\uDD95 \u30B8\u30E5\u30E9\u30B7\u30C3\u30AF\u30FB\u30D1\u30FC\u30AF',sub:'\u30B6\u30FB\u30D5\u30E9\u30A4\u30F3\u30B0\u30FB\u30C0\u30A4\u30CA\u30BD\u30FC',color:'#1b5e20',icon:'\uD83E\uDD95',cx:367,cy:151,
+    spots:['\u30A8\u30EA\u30A2\u5165\u53E3\u524D','\u30B6\u30FB\u30D5\u30E9\u30A4\u30F3\u30B0\u30FB\u30C0\u30A4\u30CA\u30BD\u30FC\u524D','\u30B8\u30E5\u30E9\u30B7\u30C3\u30AF\u30FB\u30D1\u30FC\u30AF\u30FB\u30B6\u30FB\u30E9\u30A4\u30C9\u524D','\u30C0\u30A4\u30CA\u30BD\u30FC\u30FB\u30C0\u30A4\u30CA\u30FC\u524D']},
+  amity:{name:'\uD83E\uDD88 \u30A2\u30DF\u30C6\u30A3\u30FB\u30D3\u30EC\u30C3\u30B8',sub:'\u30B8\u30E7\u30FC\u30BA\u30A8\u30EA\u30A2',color:'#0277bd',icon:'\uD83E\uDD88',cx:372,cy:278,
+    spots:['\u30A8\u30EA\u30A2\u5165\u53E3\u524D','\u30B8\u30E7\u30FC\u30BA\u524D','\u30A2\u30DF\u30C6\u30A3\u30FB\u30A2\u30A4\u30B9\u30AF\u30EA\u30FC\u30E0\u524D','\u30D5\u30A3\u30C3\u30B7\u30E5\uFF06\u30C1\u30C3\u30D7\u30B9\u524D']},
+  waterworld:{name:'\uD83D\uDCA7 \u30A6\u30A9\u30FC\u30BF\u30FC\u30EF\u30FC\u30EB\u30C9',sub:'\u30B9\u30BF\u30F3\u30C8\u30B7\u30E7\u30FC\u30FB\u5927\u8FEB\u529B\u6C34\u4E0A\u30B7\u30E7\u30FC',color:'#006064',icon:'\uD83D\uDCA7',cx:305,cy:371,
+    spots:['\u30B9\u30BF\u30F3\u30C8\u30B7\u30E7\u30FC\u4F1A\u5834\u524D','\u30A6\u30A9\u30FC\u30BF\u30FC\u30EF\u30FC\u30EB\u30C9\u5165\u53E3','\u30D9\u30F3\u30C1\u30A8\u30EA\u30A2\uFF08\u4F1A\u5834\u6A2A\uFF09']},
+  mario:{name:'\uD83C\uDF44 \u30B9\u30FC\u30D1\u30FC\u30FB\u30CB\u30F3\u30C6\u30F3\u30C9\u30FC\u30FB\u30EF\u30FC\u30EB\u30C9',sub:'\u30DE\u30EA\u30AA\u30AB\u30FC\u30C8\u30FB\u30C9\u30F3\u30AD\u30FC\u30B3\u30F3\u30B0\u30FB\u30E8\u30C3\u30B7\u30FC',color:'#b71c1c',icon:'\uD83C\uDF44',cx:209,cy:412,
+    spots:['\u30A8\u30EA\u30A2\u5165\u53E3\u30B2\u30FC\u30C8\u524D','\u30DE\u30EA\u30AA\u30AB\u30FC\u30C8\u524D','\u30E8\u30C3\u30B7\u30FC\u306E\u30A2\u30C9\u30D9\u30F3\u30C1\u30E3\u30FC\u524D','\u30AD\u30CE\u30D4\u30AA\u30AB\u30D5\u30A7\u524D','\u30C9\u30F3\u30AD\u30FC\u30B3\u30F3\u30B0\u30FB\u30A8\u30EA\u30A2\u524D']},
+  hp:{name:'\u26A1 \u30A6\u30A3\u30B6\u30FC\u30C7\u30A3\u30F3\u30B0\u30FB\u30EF\u30FC\u30EB\u30C9\u30FB\u30AA\u30D6\u30FB\u30CF\u30EA\u30FC\u30FB\u30DD\u30C3\u30BF\u30FC',sub:'\u30DB\u30B0\u30EF\u30FC\u30C4\u57CE\u30FB\u30DB\u30B0\u30BA\u30DF\u30FC\u30C9\u6751',color:'#6a1b9a',icon:'\u26A1',cx:202,cy:346,
+    spots:['\u30A8\u30EA\u30A2\u5165\u53E3\u30FB\u30DB\u30B0\u30BA\u30DF\u30FC\u30C9\u6751','\u30DB\u30B0\u30EF\u30FC\u30C4\u57CE\u5165\u53E3\u524D','\u4E09\u672C\u306E\u7B52\uFF08\u30EC\u30B9\u30C8\u30E9\u30F3\uFF09\u524D','\u30CF\u30CB\u30FC\u30C7\u30E5\u30FC\u30AF\u30B9\uFF08\u304A\u83D3\u5B50\u5C4B\uFF09\u524D','\u30AA\u30EA\u30D0\u30F3\u30C0\u30FC\u306E\u5E97\u524D']},
+  wonderland:{name:'\uD83D\uDC36 \u30E6\u30CB\u30D0\u30FC\u30B5\u30EB\u30FB\u30EF\u30F3\u30C0\u30FC\u30E9\u30F3\u30C9',sub:'\u30B9\u30CC\u30FC\u30D4\u30FC\u30FB\u30BB\u30B5\u30DF\u30FB\u30AD\u30C6\u30A3',color:'#880e4f',icon:'\uD83D\uDC36',cx:110,cy:337,
+    spots:['\u30A8\u30EA\u30A2\u5165\u53E3\u524D','\u30B9\u30CC\u30FC\u30D4\u30FC\u306E\u30D5\u30E9\u30A4\u30F3\u30B0\u30FB\u30A8\u30FC\u30B9\u524D','\u30B9\u30CC\u30FC\u30D4\u30FC\u30FB\u30B9\u30BF\u30B8\u30AA\u30FB\u30B9\u30C8\u30A2\u524D','\u30AD\u30C6\u30A3\u306E\u30AB\u30C3\u30D7\u30B1\u30FC\u30AD\u30FB\u30C9\u30EA\u30FC\u30E0\u524D']},
+};
+
+let ca=null,cs=null,cm='';
+let hintHidden=false;
+
+// \u30D1\u30FC\u30C6\u30A3\u30AF\u30EB\u30A8\u30D5\u30A7\u30AF\u30C8
+const canvas=document.getElementById('fx');
+const ctx2=canvas.getContext('2d');
+let particles=[];
+
+function resizeCanvas(){
+  const wrap=document.getElementById('mapWrap');
+  canvas.width=wrap.offsetWidth;
+  canvas.height=wrap.offsetHeight;
+}
+window.addEventListener('resize',resizeCanvas);
+setTimeout(resizeCanvas,100);
+
+function spawnParticles(x,y,color){
+  const rect=document.getElementById('mapWrap').getBoundingClientRect();
+  const svg=document.querySelector('.map-wrap svg');
+  const vbW=460,vbH=545;
+  const scaleX=rect.width/vbW;
+  const scaleY=rect.height/vbH;
+  const px=(x-15)*scaleX;
+  const py=(y-10)*scaleY;
+  for(let i=0;i<18;i++){
+    const angle=Math.random()*Math.PI*2;
+    const speed=1.5+Math.random()*3;
+    particles.push({
+      x:px,y:py,
+      vx:Math.cos(angle)*speed,
+      vy:Math.sin(angle)*speed-2,
+      life:1,decay:0.03+Math.random()*0.02,
+      r:2+Math.random()*4,
+      color:color,
+      emoji:['\u2B50','\u2728','\uD83C\uDF1F'][Math.floor(Math.random()*3)]
+    });
+  }
+}
+
+function animParticles(){
+  ctx2.clearRect(0,0,canvas.width,canvas.height);
+  particles=particles.filter(p=>{
+    p.x+=p.vx;p.y+=p.vy;p.vy+=0.12;p.life-=p.decay;
+    if(p.life<=0)return false;
+    ctx2.save();
+    ctx2.globalAlpha=p.life;
+    ctx2.font=`${p.r*3}px serif`;
+    ctx2.fillText(p.emoji,p.x-p.r,p.y+p.r);
+    ctx2.restore();
+    return true;
+  });
+  requestAnimationFrame(animParticles);
+}
+animParticles();
+
+function sel(el){
+  document.querySelectorAll('.blk').forEach(e=>e.classList.remove('sel'));
+  el.classList.add('sel');
+  const a=D[el.dataset.id];ca=a;cs=null;
+  userEdited=false;isEditing=false;
+  var msgEl=document.getElementById('msg');
+  if(msgEl)msgEl.setAttribute('readonly','');
+  var eBtn=document.getElementById('editBtn');
+  if(eBtn){eBtn.innerHTML='&#x270F;&#xFE0F; \u7DE8\u96C6';eBtn.classList.remove('on');}
+
+  if(!hintHidden){document.getElementById('hint').classList.add('hide');hintHidden=true;}
+
+  // \u30D1\u30FC\u30C6\u30A3\u30AF\u30EB
+  spawnParticles(a.cx,a.cy,a.color);
+
+  // \u30D4\u30F3
+  const pin=document.getElementById('pin');
+  const r1=document.getElementById('pinRing1');
+  const r2=document.getElementById('pinRing2');
+  const txt=document.getElementById('pinTxt');
+  pin.style.display='block';
+  [r1,r2].forEach(e=>{e.setAttribute('cx',a.cx);e.setAttribute('cy',a.cy);});
+  txt.setAttribute('x',a.cx);txt.setAttribute('y',a.cy-2);
+  r1.setAttribute('stroke',a.color+'88');
+  pin.classList.remove('pin-anim');void pin.offsetWidth;pin.classList.add('pin-anim');
+
+  // \u30D1\u30CD\u30EB
+  const banner=document.getElementById('pBanner');
+  banner.style.setProperty('--ac',a.color);
+  const ico=document.getElementById('pIco');
+  ico.textContent=a.icon;
+  ico.style.background=a.color+'20';
+  ico.style.borderColor=a.color+'40';
+  document.getElementById('pName').textContent=a.name;
+  document.getElementById('pSub').textContent=a.sub;
+
+  // \u30B9\u30DD\u30C3\u30C8
+  const sp=document.getElementById('spots');sp.innerHTML='';
+  a.spots.forEach(s=>{
+    const b=document.createElement('button');b.className='spot';b.textContent=s;
+    b.onclick=()=>{
+      document.querySelectorAll('#spots .spot').forEach(x=>{
+        x.classList.remove('on');x.style.background='';x.style.borderColor='';
+      });
+      b.classList.add('on');
+      b.style.background=a.color+'25';
+      b.style.borderColor=a.color;
+      cs=s;upd();
+    };
+    sp.appendChild(b);
+  });
+
+  upd();
+  const panel=document.getElementById('panel');panel.classList.add('show');
+  setTimeout(()=>panel.scrollIntoView({behavior:'smooth',block:'nearest'}),150);
+  // 選択エリアをSVG内で最前面に移動（下に埋まるエリアの浮き上がり対策）
+  const pinEl=document.getElementById('pin');
+  if(pinEl&&pinEl.parentNode)pinEl.parentNode.insertBefore(el,pinEl);
+}
+
+let isEditing=false;
+let userEdited=false;
+const PKEY='\uD83D\uDCCC \u5F85\u3061\u5408\u308F\u305B\uFF1A';
+const AKEY='\uD83D\uDDFA \u30A8\u30EA\u30A2\uFF1A';
+
+function buildMsg(){
+  if(!ca)return '';
+  const now=new Date();
+  const hm=now.getHours()+'\u6642'+('0'+now.getMinutes()).slice(-2)+'\u5206';
+  const sp=cs?('\n'+PKEY+cs):'';
+  return '\uD83D\uDCCD USJ\u3067\u5F85\u3063\u3066\u308B\u3088\uFF01\n\n'+AKEY+ca.name+sp+'\n\n\u23F0 '+hm+'\u73FE\u5728\n\n\u3053\u3053\u3067\u5F85\u3063\u3066\u308B\u306D\uFF01\u898B\u3064\u304B\u3089\u306A\u304B\u3063\u305F\u3089\u9023\u7D61\u3057\u3066\uFF5E\uD83D\uDE4C';
+}
+
+function upd(){
+  if(!ca)return;
+  var el=document.getElementById('msg');
+  if(!userEdited){
+    var base=buildMsg();
+    el.value=base;cm=base;
+  } else {
+    var current=el.value;
+    var PKEY='\uD83D\uDCCC \u5F85\u3061\u5408\u308F\u305B\uFF1A';
+    var AKEY='\uD83D\uDDFA \u30A8\u30EA\u30A2\uFF1A';
+    var spLine=cs?(PKEY+cs):'';
+    var updated;
+    if(current.indexOf(PKEY)>=0){
+      if(cs){
+        var idx=current.indexOf(PKEY);
+        var end=current.indexOf('\n',idx);
+        updated=current.substring(0,idx)+spLine+(end>=0?current.substring(end):'');
+      } else {
+        var idx2=current.indexOf('\n'+PKEY);
+        var end2=current.indexOf('\n',idx2+1);
+        updated=idx2>=0?current.substring(0,idx2)+(end2>=0?current.substring(end2):''):current;
+      }
+    } else {
+      if(cs){
+        var idx3=current.indexOf(AKEY);
+        if(idx3>=0){
+          var end3=current.indexOf('\n',idx3);
+          updated=end3>=0?current.substring(0,end3)+'\n'+spLine+current.substring(end3):current+'\n'+spLine;
+        } else {updated=current;}
+      } else {updated=current;}
+    }
+    el.value=updated;cm=updated;
+  }
+}
+
+function shareLine(){cm=document.getElementById('msg').value;if(cm)window.open('https://line.me/R/msg/text/?'+encodeURIComponent(cm),'_blank')}
+function copyMsg(){
+  if(!cm)return;
+  cm=document.getElementById('msg').value;
+  const done=()=>showToast('\uD83D\uDCCB \u30B3\u30D4\u30FC\u5B8C\u4E86\uFF01SNS\u306B\u8CBC\u308A\u4ED8\u3051\u3066\u306D\uD83D\uDE4C');
+  if(navigator.clipboard){navigator.clipboard.writeText(cm).then(done).catch(()=>{fb();done();})}
+  else{fb();done();}
+}
+function fb(){
+  const t=document.createElement('textarea');t.value=cm;
+  t.style.cssText='position:fixed;opacity:0';
+  document.body.appendChild(t);t.select();
+  document.execCommand('copy');document.body.removeChild(t);
+}
+
+function toggleEdit(){
+  var el=document.getElementById('msg');
+  var btn=document.getElementById('editBtn');
+  isEditing=!isEditing;
+  if(isEditing){
+    el.removeAttribute('readonly');el.focus();
+    btn.innerHTML='&#x2705; \u5B8C\u4E86';btn.classList.add('on');
+    el.oninput=function(){userEdited=true;};
+  } else {
+    el.setAttribute('readonly','');cm=el.value;
+    btn.innerHTML='&#x270F;&#xFE0F; \u7DE8\u96C6';btn.classList.remove('on');
+  }
+}
+
+function showToast(m){
+  const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+</script>
+</body>
+</html>
