@@ -313,6 +313,14 @@ header{
   100%{opacity:1;transform:scale(1) translateY(0)}
 }
 .pin-anim{animation:pinPop 0.45s cubic-bezier(0.34,1.56,0.64,1) forwards}
+
+/* ===== 3D Map enhancements ===== */
+.wShimmer1{animation:wShimmer 3s ease-in-out infinite;transform-origin:224px 259px}
+.wShimmer2{animation:wShimmer 4.5s ease-in-out infinite 1.5s;transform-origin:258px 287px}
+@keyframes wShimmer{0%,100%{opacity:.14}50%{opacity:.32}}
+.fntStream{animation:fntPulse 2.5s ease-in-out infinite}
+@keyframes fntPulse{0%,100%{opacity:.45}50%{opacity:.9}}
+.blk.sel polygon:not(.top),.blk.sel rect:not(.top){opacity:.55}
 </style>
 </head>
 <body>
@@ -362,177 +370,208 @@ header{
 <svg viewBox="-10 0 510 540" xmlns="http://www.w3.org/2000/svg">
 <defs>
   <radialGradient id="gGnd" cx="50%" cy="45%" r="55%">
-    <stop offset="0%" stop-color="#2a5230"/>
-    <stop offset="70%" stop-color="#1a3d1e"/>
+    <stop offset="0%" stop-color="#2e5c34"/>
+    <stop offset="65%" stop-color="#1a3d1e"/>
     <stop offset="100%" stop-color="#0d2010"/>
   </radialGradient>
-  <radialGradient id="gLake" cx="35%" cy="30%" r="65%">
-    <stop offset="0%" stop-color="#64b8f8"/>
-    <stop offset="60%" stop-color="#1976d2"/>
-    <stop offset="100%" stop-color="#0d47a1"/>
+  <radialGradient id="gLake" cx="38%" cy="30%" r="65%">
+    <stop offset="0%" stop-color="#a4daff"/>
+    <stop offset="42%" stop-color="#1e88e5"/>
+    <stop offset="100%" stop-color="#0a3a6e"/>
   </radialGradient>
-  <linearGradient id="gMin" x1="0" y1="0" x2="0.4" y2="1"><stop offset="0%" stop-color="#fff176"/><stop offset="100%" stop-color="#f57f17"/></linearGradient>
-  <linearGradient id="gSF"  x1="0" y1="0" x2="0.4" y2="1"><stop offset="0%" stop-color="#b9fbc0"/><stop offset="100%" stop-color="#1b5e20"/></linearGradient>
-  <linearGradient id="gJur" x1="0" y1="0" x2="0.4" y2="1"><stop offset="0%" stop-color="#ccff90"/><stop offset="100%" stop-color="#1b5e20"/></linearGradient>
-  <linearGradient id="gAmi" x1="0" y1="0" x2="0.4" y2="1"><stop offset="0%" stop-color="#80d8ff"/><stop offset="100%" stop-color="#01579b"/></linearGradient>
-  <linearGradient id="gWW"  x1="0" y1="0" x2="0.4" y2="1"><stop offset="0%" stop-color="#84ffff"/><stop offset="100%" stop-color="#006064"/></linearGradient>
-  <linearGradient id="gMar" x1="0" y1="0" x2="0.4" y2="1"><stop offset="0%" stop-color="#ff8a80"/><stop offset="100%" stop-color="#b71c1c"/></linearGradient>
-  <linearGradient id="gHP"  x1="0" y1="0" x2="0.4" y2="1"><stop offset="0%" stop-color="#ea80fc"/><stop offset="100%" stop-color="#4a148c"/></linearGradient>
-  <linearGradient id="gWL"  x1="0" y1="0" x2="0.4" y2="1"><stop offset="0%" stop-color="#ff80ab"/><stop offset="100%" stop-color="#880e4f"/></linearGradient>
-  <linearGradient id="gHW"  x1="0" y1="0" x2="0.4" y2="1"><stop offset="0%" stop-color="#ffff8d"/><stop offset="100%" stop-color="#e65100"/></linearGradient>
-  <linearGradient id="gNY"  x1="0" y1="0" x2="0.4" y2="1"><stop offset="0%" stop-color="#d1c4e9"/><stop offset="100%" stop-color="#1a237e"/></linearGradient>
-  <linearGradient id="gEnt" x1="0" y1="0" x2="0.4" y2="1"><stop offset="0%" stop-color="#ffe082"/><stop offset="100%" stop-color="#bf360c"/></linearGradient>
-  <filter id="sh"><feDropShadow dx="2" dy="5" stdDeviation="4" flood-color="rgba(0,0,0,0.55)"/></filter>
-  <filter id="shB"><feDropShadow dx="1" dy="3" stdDeviation="2" flood-color="rgba(0,0,0,0.4)"/></filter>
+  <linearGradient id="gMin" x1="0.2" y1="0" x2="0.7" y2="1"><stop offset="0%" stop-color="#ffe840"/><stop offset="55%" stop-color="#FFD700"/><stop offset="100%" stop-color="#cc7700"/></linearGradient>
+  <linearGradient id="gSF"  x1="0.2" y1="0" x2="0.7" y2="1"><stop offset="0%" stop-color="#c8ffd0"/><stop offset="50%" stop-color="#43a047"/><stop offset="100%" stop-color="#1b5e20"/></linearGradient>
+  <linearGradient id="gJur" x1="0.2" y1="0" x2="0.7" y2="1"><stop offset="0%" stop-color="#deff8e"/><stop offset="50%" stop-color="#8bc34a"/><stop offset="100%" stop-color="#1b5e20"/></linearGradient>
+  <linearGradient id="gAmi" x1="0.2" y1="0" x2="0.7" y2="1"><stop offset="0%" stop-color="#b8eaff"/><stop offset="50%" stop-color="#29b6f6"/><stop offset="100%" stop-color="#01579b"/></linearGradient>
+  <linearGradient id="gWW"  x1="0.2" y1="0" x2="0.7" y2="1"><stop offset="0%" stop-color="#b2ffff"/><stop offset="50%" stop-color="#26c6da"/><stop offset="100%" stop-color="#006064"/></linearGradient>
+  <linearGradient id="gMar" x1="0.2" y1="0" x2="0.7" y2="1"><stop offset="0%" stop-color="#ff9090"/><stop offset="50%" stop-color="#f44336"/><stop offset="100%" stop-color="#b71c1c"/></linearGradient>
+  <linearGradient id="gHP"  x1="0.2" y1="0" x2="0.7" y2="1"><stop offset="0%" stop-color="#eab8ff"/><stop offset="50%" stop-color="#ab47bc"/><stop offset="100%" stop-color="#4a148c"/></linearGradient>
+  <linearGradient id="gWL"  x1="0.2" y1="0" x2="0.7" y2="1"><stop offset="0%" stop-color="#ffb8d8"/><stop offset="50%" stop-color="#f06292"/><stop offset="100%" stop-color="#880e4f"/></linearGradient>
+  <linearGradient id="gHW"  x1="0.2" y1="0" x2="0.7" y2="1"><stop offset="0%" stop-color="#ffff9a"/><stop offset="50%" stop-color="#ffd54f"/><stop offset="100%" stop-color="#e65100"/></linearGradient>
+  <linearGradient id="gNY"  x1="0.2" y1="0" x2="0.7" y2="1"><stop offset="0%" stop-color="#e8e0ff"/><stop offset="50%" stop-color="#7c6bc0"/><stop offset="100%" stop-color="#1a237e"/></linearGradient>
+  <linearGradient id="gEnt" x1="0.2" y1="0" x2="0.7" y2="1"><stop offset="0%" stop-color="#ffe090"/><stop offset="50%" stop-color="#ffa000"/><stop offset="100%" stop-color="#bf360c"/></linearGradient>
+  <filter id="sh" x="-15%" y="-15%" width="140%" height="140%"><feDropShadow dx="1" dy="5" stdDeviation="5" flood-color="rgba(0,0,0,.65)"/></filter>
+  <filter id="shB" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="1" dy="2" stdDeviation="2.5" flood-color="rgba(0,0,0,.5)"/></filter>
 </defs>
 
 <!-- グラウンド -->
 <ellipse cx="240" cy="295" rx="218" ry="238" fill="url(#gGnd)"/>
-<!-- 外周リング -->
 <ellipse cx="240" cy="295" rx="218" ry="238" fill="none" stroke="rgba(255,215,0,0.08)" stroke-width="2"/>
 
-<!-- 環状道路 -->
-<ellipse cx="240" cy="288" rx="156" ry="166" fill="none" stroke="#7a6020" stroke-width="18" opacity="0.55"/>
-<ellipse cx="240" cy="288" rx="156" ry="166" fill="none" stroke="#c8a030" stroke-width="10" opacity="0.4"/>
-<ellipse cx="240" cy="288" rx="156" ry="166" fill="none" stroke="#f0d060" stroke-width="4" opacity="0.25"/>
-<ellipse cx="240" cy="288" rx="156" ry="166" fill="none" stroke="#fffde0" stroke-width="1.5" opacity="0.15"/>
+<!-- 環状道路（3D） -->
+<ellipse cx="243" cy="295" rx="158" ry="168" fill="none" stroke="#1a0f00" stroke-width="26" opacity="0.55"/>
+<ellipse cx="240" cy="288" rx="156" ry="166" fill="none" stroke="#6a5010" stroke-width="20" opacity="0.62"/>
+<ellipse cx="240" cy="288" rx="156" ry="166" fill="none" stroke="#c8a030" stroke-width="12" opacity="0.36"/>
+<ellipse cx="240" cy="288" rx="156" ry="166" fill="none" stroke="#f0d060" stroke-width="3.5" opacity="0.2" stroke-dasharray="14,10"/>
+<ellipse cx="240" cy="288" rx="147" ry="157" fill="none" stroke="rgba(240,200,60,.12)" stroke-width="1.5"/>
+<ellipse cx="240" cy="288" rx="165" ry="175" fill="none" stroke="rgba(240,200,60,.1)" stroke-width="1.5"/>
 
-<!-- ラグーン -->
-<ellipse cx="240" cy="276" rx="112" ry="100" fill="url(#gLake)" opacity="0.92"/>
-<!-- 水面光 -->
-<ellipse cx="225" cy="258" rx="60" ry="26" fill="rgba(255,255,255,0.12)" transform="rotate(-18,225,258)"/>
-<ellipse cx="256" cy="286" rx="32" ry="13" fill="rgba(255,255,255,0.06)" transform="rotate(12,256,286)"/>
+<!-- ラグーン（3D凹み） -->
+<ellipse cx="244" cy="283" rx="115" ry="103" fill="#041e52" opacity="0.82"/>
+<ellipse cx="240" cy="276" rx="112" ry="100" fill="url(#gLake)" opacity="0.94"/>
+<ellipse cx="224" cy="258" rx="60" ry="26" fill="rgba(255,255,255,.15)" transform="rotate(-18,224,258)" class="wShimmer1"/>
+<ellipse cx="258" cy="287" rx="32" ry="13" fill="rgba(255,255,255,.07)" transform="rotate(12,258,287)" class="wShimmer2"/>
+<ellipse cx="240" cy="276" rx="112" ry="100" fill="none" stroke="rgba(160,220,255,.4)" stroke-width="2.5"/>
 <!-- 噴水 -->
-<ellipse cx="240" cy="278" rx="12" ry="6" fill="rgba(150,210,255,0.4)"/>
-<line x1="240" y1="272" x2="238" y2="260" stroke="rgba(180,230,255,0.6)" stroke-width="1.5"/>
-<line x1="240" y1="272" x2="244" y2="258" stroke="rgba(180,230,255,0.5)" stroke-width="1.5"/>
-<line x1="240" y1="272" x2="236" y2="255" stroke="rgba(180,230,255,0.4)" stroke-width="1"/>
+<ellipse cx="240" cy="280" rx="14" ry="6.5" fill="rgba(120,200,255,.3)" stroke="rgba(180,230,255,.5)" stroke-width="1.2"/>
+<line x1="240" y1="274" x2="233" y2="254" stroke="rgba(180,230,255,.65)" stroke-width="1.5" class="fntStream"/>
+<line x1="240" y1="274" x2="247" y2="253" stroke="rgba(180,230,255,.55)" stroke-width="1.5" class="fntStream"/>
+<line x1="240" y1="274" x2="237" y2="251" stroke="rgba(180,230,255,.45)" stroke-width="1" class="fntStream"/>
+<line x1="240" y1="274" x2="244" y2="250" stroke="rgba(180,230,255,.4)" stroke-width="1" class="fntStream"/>
+<circle cx="233" cy="254" r="2.5" fill="rgba(200,240,255,.7)" class="fntStream"/>
+<circle cx="247" cy="253" r="2" fill="rgba(200,240,255,.6)" class="fntStream"/>
 <text x="240" y="248" text-anchor="middle" fill="#fff" font-size="13" font-weight="bold" font-family="'Noto Sans JP'" stroke="#0d47a1" stroke-width="3" paint-order="stroke">セントラル</text>
-<text x="240" y="262" text-anchor="middle" fill="rgba(200,230,255,0.85)" font-size="9.5" font-family="'Noto Sans JP'" stroke="#0d47a1" stroke-width="2" paint-order="stroke">ラグーン</text>
+<text x="240" y="263" text-anchor="middle" fill="rgba(200,235,255,.88)" font-size="9.5" font-family="'Noto Sans JP'" stroke="#0d47a1" stroke-width="2" paint-order="stroke">ラグーン</text>
 
-<!-- 影レイヤー -->
-<polygon points="163,31 205,18 248,26 272,111 258,116 224,102 192,110 172,80" fill="#000" opacity="0.25" transform="translate(5,9)"/>
-<polygon points="252,28 304,32 344,56 322,136 316,136 292,114 258,110 264,76" fill="#000" opacity="0.25" transform="translate(5,9)"/>
-<polygon points="346,58 386,80 404,124 418,166 413,208 392,216 362,210 358,186 350,183 326,144 320,135 332,98" fill="#000" opacity="0.25" transform="translate(5,9)"/>
-<polygon points="414,211 420,253 403,296 390,326 370,350 346,331 332,311 348,285 350,250 358,232 362,212" fill="#000" opacity="0.25" transform="translate(5,9)"/>
-<polygon points="371,352 352,381 322,406 296,419 272,428 260,394 252,370 282,358 302,340 318,325 332,313" fill="#000" opacity="0.25" transform="translate(5,9)"/>
-<polygon points="252,373 274,431 238,443 202,448 170,445 156,418 154,396 188,396 218,388 236,382" fill="#000" opacity="0.25" transform="translate(5,9)"/>
-<polygon points="154,395 172,401 205,401 238,401 256,371 268,344 260,314 243,299 220,296 196,293 175,304 152,318 147,345 142,368" fill="#000" opacity="0.25" transform="translate(5,9)"/>
-<polygon points="82,368 70,330 74,295 93,294 118,300 134,308 148,343 143,368 132,382 107,378" fill="#000" opacity="0.25" transform="translate(5,9)"/>
-<polygon points="18,260 14,210 26,170 62,175 88,190 82,228 82,265 56,268" fill="#000" opacity="0.25" transform="translate(5,9)"/>
-<polygon points="28,166 42,116 84,81 122,48 170,32 180,80 160,106 137,118 110,140 92,155 87,188 62,178" fill="#000" opacity="0.25" transform="translate(5,9)"/>
-<rect x="22" y="330" width="62" height="52" rx="10" fill="#000" opacity="0.25" transform="translate(5,9)"/>
 
 <!-- ===== エリア本体 ===== -->
 
 <!-- ミニオン -->
 <g class="blk" data-id="minion" onclick="sel(this)">
-  <polygon class="top" points="163,31 205,18 248,26 272,111 258,116 224,102 192,110 172,80" fill="url(#gMin)" stroke="rgba(255,200,0,0.5)" stroke-width="1.5" filter="url(#sh)"/>
-  <!-- ミニオン目 -->
-  <circle cx="205" cy="52" r="7" fill="rgba(255,255,255,0.8)" filter="url(#shB)"/>
-  <circle cx="205" cy="52" r="4" fill="#5d4037"/>
-  <circle cx="205" cy="52" r="2" fill="#1a1a1a"/>
-  <circle cx="207" cy="50" r="1" fill="#fff"/>
-  <text x="217" y="76" text-anchor="middle" fill="#2a1000" font-size="11" font-weight="900" font-family="'Noto Sans JP'" stroke="#ffe57f" stroke-width="3.5" paint-order="stroke">💛ミニオン</text>
-  <text x="217" y="90" text-anchor="middle" fill="#2a1000" font-size="10" font-family="'Noto Sans JP'" stroke="#ffe57f" stroke-width="3" paint-order="stroke">パーク</text>
+  <polygon points="163,31 205,18 248,26 272,111 258,116 224,102 192,110 172,80" fill="#8a6000" transform="translate(3,9)" opacity="0.88"/>
+  <polygon class="top" points="163,31 205,18 248,26 272,111 258,116 224,102 192,110 172,80" fill="url(#gMin)" stroke="rgba(255,210,0,.55)" stroke-width="1.5" filter="url(#sh)"/>
+  <polygon points="163,31 205,18 248,26 272,111 258,116 224,102 192,110 172,80" fill="none" stroke="rgba(255,255,255,.2)" stroke-width="1"/>
+  <circle cx="205" cy="52" r="9" fill="rgba(255,255,255,.85)" filter="url(#shB)"/>
+  <circle cx="205" cy="52" r="5.5" fill="#5d4037"/>
+  <circle cx="205" cy="52" r="3" fill="#1a1a1a"/>
+  <circle cx="207" cy="50" r="1.5" fill="#fff"/>
+  <line x1="196" y1="52" x2="214" y2="52" stroke="#888" stroke-width="2.5" opacity="0.45"/>
+  <text x="217" y="76" text-anchor="middle" fill="#1a0a00" font-size="11.5" font-weight="900" font-family="'Noto Sans JP'" stroke="#ffe57f" stroke-width="3.5" paint-order="stroke">💛ミニオン</text>
+  <text x="217" y="91" text-anchor="middle" fill="#1a0a00" font-size="10" font-family="'Noto Sans JP'" stroke="#ffe57f" stroke-width="3" paint-order="stroke">パーク</text>
 </g>
 
 <g class="blk" data-id="sanfrancisco" onclick="sel(this)">
-  <polygon class="top" points="252,28 304,32 344,56 322,136 316,136 292,114 258,110 264,76" fill="url(#gSF)" stroke="rgba(100,220,100,0.5)" stroke-width="1.5" filter="url(#sh)"/>
-  <!-- ゴールデンゲート -->
-  <line x1="268" y1="96" x2="312" y2="96" stroke="#e53935" stroke-width="2.5" opacity="0.75"/>
-  <line x1="276" y1="88" x2="276" y2="104" stroke="#e53935" stroke-width="2" opacity="0.75"/>
-  <line x1="302" y1="88" x2="302" y2="104" stroke="#e53935" stroke-width="2" opacity="0.75"/>
+  <polygon points="252,28 304,32 344,56 322,136 316,136 292,114 258,110 264,76" fill="#1c4020" transform="translate(3,9)" opacity="0.88"/>
+  <polygon class="top" points="252,28 304,32 344,56 322,136 316,136 292,114 258,110 264,76" fill="url(#gSF)" stroke="rgba(100,220,100,.5)" stroke-width="1.5" filter="url(#sh)"/>
+  <polygon points="252,28 304,32 344,56 322,136 316,136 292,114 258,110 264,76" fill="none" stroke="rgba(255,255,255,.18)" stroke-width="1"/>
+  <line x1="268" y1="99" x2="316" y2="99" stroke="#c62828" stroke-width="3.5" opacity="0.8"/>
+  <rect x="272" y="86" width="5" height="21" fill="#c62828" opacity="0.85"/>
+  <rect x="308" y="86" width="5" height="21" fill="#c62828" opacity="0.85"/>
+  <path d="M272,87 Q292,95 312,87" fill="none" stroke="#c62828" stroke-width="1.2" opacity="0.6"/>
   <text x="294" y="72" text-anchor="middle" fill="#fff" font-size="10" font-weight="900" font-family="'Noto Sans JP'" stroke="#004d40" stroke-width="4" paint-order="stroke">🌉 サンフランシスコ</text>
 </g>
 
 <g class="blk" data-id="jurassic" onclick="sel(this)">
-  <polygon class="top" points="346,58 386,80 404,124 418,166 413,208 392,216 362,210 358,186 350,183 326,144 320,135 332,98" fill="url(#gJur)" stroke="rgba(120,220,80,0.5)" stroke-width="1.5" filter="url(#sh)"/>
-  <!-- 恐竜シルエット -->
-  <path d="M370,130 Q375,115 385,118 Q392,120 390,128 Q385,124 380,130 Q378,138 374,140Z" fill="rgba(30,80,20,0.7)"/>
-  <circle cx="387" cy="116" r="4" fill="rgba(30,80,20,0.6)"/>
-  <text x="381" y="158" text-anchor="middle" fill="#fff" font-size="12" font-weight="900" font-family="'Noto Sans JP'" stroke="#1b5e20" stroke-width="4" paint-order="stroke">🦕 ジュラシックパーク</text>
+  <polygon points="346,58 386,80 404,124 418,166 413,208 392,216 362,210 358,186 350,183 326,144 320,135 332,98" fill="#1c4810" transform="translate(3,9)" opacity="0.88"/>
+  <polygon class="top" points="346,58 386,80 404,124 418,166 413,208 392,216 362,210 358,186 350,183 326,144 320,135 332,98" fill="url(#gJur)" stroke="rgba(120,220,80,.5)" stroke-width="1.5" filter="url(#sh)"/>
+  <polygon points="346,58 386,80 404,124 418,166 413,208 392,216 362,210 358,186 350,183 326,144 320,135 332,98" fill="none" stroke="rgba(255,255,255,.18)" stroke-width="1"/>
+  <path d="M372,125 Q378,108 389,112 Q396,114 394,124 Q389,119 383,125 Q382,135 377,140 Q373,140 372,134Z" fill="rgba(20,60,10,.75)"/>
+  <circle cx="390" cy="110" r="5" fill="rgba(20,60,10,.7)"/>
+  <circle cx="392" cy="108" r="1.5" fill="rgba(255,200,0,.8)"/>
+  <text x="381" y="160" text-anchor="middle" fill="#fff" font-size="12" font-weight="900" font-family="'Noto Sans JP'" stroke="#1b5e20" stroke-width="4" paint-order="stroke">🦕 ジュラシックパーク</text>
 </g>
 
 <g class="blk" data-id="amity" onclick="sel(this)">
-  <polygon class="top" points="414,211 420,253 403,296 390,326 370,350 346,331 332,311 348,285 350,250 358,232 362,212" fill="url(#gAmi)" stroke="rgba(80,200,255,0.5)" stroke-width="1.5" filter="url(#sh)"/>
-  <!-- 波 -->
-  <path d="M340,300 Q348,295 356,300 Q364,305 372,300" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/>
-  <path d="M342,310 Q350,305 358,310 Q366,315 374,310" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+  <polygon points="414,211 420,253 403,296 390,326 370,350 346,331 332,311 348,285 350,250 358,232 362,212" fill="#084070" transform="translate(3,9)" opacity="0.88"/>
+  <polygon class="top" points="414,211 420,253 403,296 390,326 370,350 346,331 332,311 348,285 350,250 358,232 362,212" fill="url(#gAmi)" stroke="rgba(80,200,255,.5)" stroke-width="1.5" filter="url(#sh)"/>
+  <polygon points="414,211 420,253 403,296 390,326 370,350 346,331 332,311 348,285 350,250 358,232 362,212" fill="none" stroke="rgba(255,255,255,.18)" stroke-width="1"/>
+  <path d="M370,300 L374,284 L378,300Z" fill="rgba(60,60,80,.8)" stroke="rgba(255,255,255,.2)" stroke-width="1"/>
+  <path d="M338,302 Q346,297 354,302 Q362,307 370,302" fill="none" stroke="rgba(255,255,255,.45)" stroke-width="1.8"/>
+  <path d="M340,312 Q348,307 356,312 Q364,317 372,312" fill="none" stroke="rgba(255,255,255,.3)" stroke-width="1.5"/>
+  <path d="M342,322 Q350,317 358,322 Q366,327 374,322" fill="none" stroke="rgba(255,255,255,.2)" stroke-width="1.2"/>
   <text x="375" y="272" text-anchor="middle" fill="#fff" font-size="12" font-weight="900" font-family="'Noto Sans JP'" stroke="#01579b" stroke-width="4" paint-order="stroke">🦈 アミティビレッジ</text>
 </g>
 
 <g class="blk" data-id="waterworld" onclick="sel(this)">
-  <polygon class="top" points="371,352 352,381 322,406 296,419 272,428 260,394 252,370 282,358 302,340 318,325 332,313" fill="url(#gWW)" stroke="rgba(80,240,240,0.5)" stroke-width="1.5" filter="url(#sh)"/>
-  <!-- スタジアム -->
-  <ellipse cx="302" cy="368" rx="22" ry="12" fill="rgba(0,100,120,0.5)" stroke="rgba(100,240,240,0.4)" stroke-width="1.5"/>
-  <ellipse cx="302" cy="365" rx="14" ry="7" fill="rgba(150,255,255,0.2)"/>
-  <text x="325" y="398" text-anchor="middle" fill="#fff" font-size="12" font-weight="900" font-family="'Noto Sans JP'" stroke="#006064" stroke-width="4" paint-order="stroke">💧 ウォーターワールド</text>
+  <polygon points="371,352 352,381 322,406 296,419 272,428 260,394 252,370 282,358 302,340 318,325 332,313" fill="#004860" transform="translate(3,9)" opacity="0.88"/>
+  <polygon class="top" points="371,352 352,381 322,406 296,419 272,428 260,394 252,370 282,358 302,340 318,325 332,313" fill="url(#gWW)" stroke="rgba(80,240,240,.5)" stroke-width="1.5" filter="url(#sh)"/>
+  <polygon points="371,352 352,381 322,406 296,419 272,428 260,394 252,370 282,358 302,340 318,325 332,313" fill="none" stroke="rgba(255,255,255,.18)" stroke-width="1"/>
+  <ellipse cx="302" cy="368" rx="24" ry="13" fill="rgba(0,100,120,.55)" stroke="rgba(100,240,240,.45)" stroke-width="2"/>
+  <ellipse cx="302" cy="366" rx="16" ry="8" fill="rgba(180,255,255,.18)"/>
+  <path d="M295,356 Q302,348 309,356" fill="none" stroke="rgba(180,240,255,.5)" stroke-width="1.5"/>
+  <text x="325" y="400" text-anchor="middle" fill="#fff" font-size="12" font-weight="900" font-family="'Noto Sans JP'" stroke="#006064" stroke-width="4" paint-order="stroke">💧 ウォーターワールド</text>
 </g>
 
 <g class="blk" data-id="mario" onclick="sel(this)">
-  <polygon class="top" points="252,373 274,431 238,443 202,448 170,445 156,418 154,396 188,396 218,388 236,382" fill="url(#gMar)" stroke="rgba(255,120,120,0.5)" stroke-width="1.5" filter="url(#sh)"/>
-  <text x="209" y="418" text-anchor="middle" fill="#fff" font-size="12" font-weight="900" font-family="'Noto Sans JP'" stroke="#7f0000" stroke-width="4" paint-order="stroke">🍄 ニンテンドーワールド</text>
+  <polygon points="252,373 274,431 238,443 202,448 170,445 156,418 154,396 188,396 218,388 236,382" fill="#7a0000" transform="translate(3,9)" opacity="0.88"/>
+  <polygon class="top" points="252,373 274,431 238,443 202,448 170,445 156,418 154,396 188,396 218,388 236,382" fill="url(#gMar)" stroke="rgba(255,120,120,.5)" stroke-width="1.5" filter="url(#sh)"/>
+  <polygon points="252,373 274,431 238,443 202,448 170,445 156,418 154,396 188,396 218,388 236,382" fill="none" stroke="rgba(255,255,255,.18)" stroke-width="1"/>
+  <rect x="183" y="406" width="18" height="18" rx="3" fill="rgba(255,165,0,.85)" stroke="rgba(255,220,0,.6)" stroke-width="1.5"/>
+  <text x="192" y="419" text-anchor="middle" fill="#fff" font-size="13" font-weight="900" font-family="'Noto Sans JP'">?</text>
+  <ellipse cx="220" cy="412" rx="7" ry="5" fill="rgba(200,30,30,.8)"/>
+  <rect x="217" y="412" width="6" height="6" rx="1" fill="rgba(230,200,150,.85)"/>
+  <circle cx="217" cy="410" r="1.5" fill="rgba(255,255,255,.7)"/>
+  <circle cx="223" cy="410" r="1.5" fill="rgba(255,255,255,.7)"/>
+  <text x="209" y="437" text-anchor="middle" fill="#fff" font-size="12" font-weight="900" font-family="'Noto Sans JP'" stroke="#7f0000" stroke-width="4" paint-order="stroke">🍄 ニンテンドーワールド</text>
 </g>
 
 <g class="blk" data-id="hp" onclick="sel(this)">
-  <polygon class="top" points="154,395 172,401 205,401 238,401 256,371 268,344 260,314 243,299 220,296 196,293 175,304 152,318 147,345 142,368" fill="url(#gHP)" stroke="rgba(200,80,255,0.5)" stroke-width="1.5" filter="url(#sh)"/>
-  <!-- ホグワーツ城タワー -->
-  <rect x="178" y="332" width="10" height="28" fill="#6a1b9a"/>
-  <polygon points="174,332 183,318 192,332" fill="#8e24aa"/>
-  <rect x="194" y="338" width="8" height="22" fill="#4a148c"/>
-  <polygon points="190,338 198,326 206,338" fill="#6a1b9a"/>
-  <rect x="240" y="328" width="10" height="30" fill="#7b1fa2"/>
-  <polygon points="236,328 245,313 254,328" fill="#9c27b0"/>
-  <rect x="181" y="340" width="4" height="4" fill="#fff59d" opacity="0.8"/>
-  <rect x="196" y="344" width="3" height="3" fill="#fff59d" opacity="0.7"/>
-  <rect x="243" y="336" width="4" height="4" fill="#fff59d" opacity="0.8"/>
-  <text x="205" y="372" text-anchor="middle" fill="#fff" font-size="12" font-weight="900" font-family="'Noto Sans JP'" stroke="#1a0030" stroke-width="4" paint-order="stroke">⚡ ハリー・ポッター</text>
+  <polygon points="154,395 172,401 205,401 238,401 256,371 268,344 260,314 243,299 220,296 196,293 175,304 152,318 147,345 142,368" fill="#380060" transform="translate(3,9)" opacity="0.88"/>
+  <polygon class="top" points="154,395 172,401 205,401 238,401 256,371 268,344 260,314 243,299 220,296 196,293 175,304 152,318 147,345 142,368" fill="url(#gHP)" stroke="rgba(200,80,255,.5)" stroke-width="1.5" filter="url(#sh)"/>
+  <polygon points="154,395 172,401 205,401 238,401 256,371 268,344 260,314 243,299 220,296 196,293 175,304 152,318 147,345 142,368" fill="none" stroke="rgba(255,255,255,.18)" stroke-width="1"/>
+  <rect x="176" y="330" width="11" height="30" fill="#4a1070" stroke="rgba(180,80,255,.3)" stroke-width="1"/>
+  <polygon points="172,330 181,313 191,330" fill="#6a20a0"/>
+  <rect x="192" y="336" width="9" height="25" fill="#380060" stroke="rgba(180,80,255,.3)" stroke-width="1"/>
+  <polygon points="188,336 196,321 205,336" fill="#5a1890"/>
+  <rect x="238" y="325" width="11" height="32" fill="#4a1070" stroke="rgba(180,80,255,.3)" stroke-width="1"/>
+  <polygon points="234,325 243,308 253,325" fill="#6a20a0"/>
+  <rect x="179" y="338" width="5" height="5" fill="rgba(255,240,130,.88)"/>
+  <rect x="195" y="343" width="4" height="4" fill="rgba(255,240,130,.78)"/>
+  <rect x="241" y="333" width="5" height="5" fill="rgba(255,240,130,.88)"/>
+  <text x="205" y="373" text-anchor="middle" fill="#fff" font-size="12" font-weight="900" font-family="'Noto Sans JP'" stroke="#1a0030" stroke-width="4" paint-order="stroke">⚡ ハリー・ポッター</text>
 </g>
 
 <g class="blk" data-id="wonderland" onclick="sel(this)">
-  <polygon class="top" points="82,368 70,330 74,295 93,294 118,300 134,308 148,343 143,368 132,382 107,378" fill="url(#gWL)" stroke="rgba(255,80,160,0.5)" stroke-width="1.5" filter="url(#sh)"/>
-  <!-- メリーゴーランド -->
-  <circle cx="108" cy="355" r="10" fill="rgba(255,100,150,0.5)" stroke="rgba(255,180,200,0.6)" stroke-width="1.5"/>
-  <polygon points="104,355 108,345 112,355" fill="rgba(255,80,140,0.8)"/>
-  <line x1="100" y1="349" x2="116" y2="361" stroke="rgba(255,200,220,0.5)" stroke-width="1"/>
-  <line x1="100" y1="361" x2="116" y2="349" stroke="rgba(255,200,220,0.5)" stroke-width="1"/>
-  <text x="108" y="325" text-anchor="middle" fill="#fff" font-size="11.5" font-weight="900" font-family="'Noto Sans JP'" stroke="#560027" stroke-width="4" paint-order="stroke">ワンダーランド</text>
-  <text x="108" y="340" text-anchor="middle" fill="#fff" font-size="14" stroke="#560027" stroke-width="3" paint-order="stroke">🐶</text>
+  <polygon points="82,368 70,330 74,295 93,294 118,300 134,308 148,343 143,368 132,382 107,378" fill="#580030" transform="translate(3,9)" opacity="0.88"/>
+  <polygon class="top" points="82,368 70,330 74,295 93,294 118,300 134,308 148,343 143,368 132,382 107,378" fill="url(#gWL)" stroke="rgba(255,80,160,.5)" stroke-width="1.5" filter="url(#sh)"/>
+  <polygon points="82,368 70,330 74,295 93,294 118,300 134,308 148,343 143,368 132,382 107,378" fill="none" stroke="rgba(255,255,255,.18)" stroke-width="1"/>
+  <line x1="108" y1="344" x2="108" y2="362" stroke="rgba(255,180,210,.6)" stroke-width="2"/>
+  <ellipse cx="108" cy="344" rx="14" ry="4" fill="rgba(255,100,160,.65)" stroke="rgba(255,190,210,.6)" stroke-width="1.5"/>
+  <polygon points="99,344 108,331 117,344" fill="rgba(255,80,150,.75)"/>
+  <ellipse cx="108" cy="362" rx="12" ry="4.5" fill="rgba(200,50,120,.5)" stroke="rgba(255,150,180,.4)" stroke-width="1"/>
+  <line x1="98" y1="344" x2="96" y2="360" stroke="rgba(255,200,220,.5)" stroke-width="1.2"/>
+  <line x1="118" y1="344" x2="120" y2="360" stroke="rgba(255,200,220,.5)" stroke-width="1.2"/>
+  <text x="108" y="324" text-anchor="middle" fill="#fff" font-size="11.5" font-weight="900" font-family="'Noto Sans JP'" stroke="#560027" stroke-width="4" paint-order="stroke">ワンダーランド</text>
+  <text x="108" y="339" text-anchor="middle" fill="#fff" font-size="14" stroke="#560027" stroke-width="3" paint-order="stroke">🐶</text>
 </g>
 
 <g class="blk" data-id="hollywood" onclick="sel(this)">
-  <polygon class="top" points="18,260 14,210 26,170 62,175 88,190 82,228 82,265 56,268" fill="url(#gHW)" stroke="rgba(255,210,50,0.5)" stroke-width="1.5" filter="url(#sh)"/>
-  <!-- ネオンサイン -->
-  <rect x="28" y="205" width="46" height="12" rx="3" fill="rgba(230,80,20,0.7)"/>
-  <text x="51" y="214" text-anchor="middle" fill="#fff" font-size="7.5" font-weight="bold" font-family="'Bebas Neue'" letter-spacing="2">HOLLYWOOD</text>
-  <text x="54" y="232" text-anchor="middle" fill="#2a1000" font-size="12" font-weight="900" font-family="'Noto Sans JP'" stroke="#ffe082" stroke-width="4" paint-order="stroke">🎬 ハリウッドエリア</text>
+  <polygon points="18,260 14,210 26,170 62,175 88,190 82,228 82,265 56,268" fill="#7a3a00" transform="translate(3,9)" opacity="0.88"/>
+  <polygon class="top" points="18,260 14,210 26,170 62,175 88,190 82,228 82,265 56,268" fill="url(#gHW)" stroke="rgba(255,210,50,.5)" stroke-width="1.5" filter="url(#sh)"/>
+  <polygon points="18,260 14,210 26,170 62,175 88,190 82,228 82,265 56,268" fill="none" stroke="rgba(255,255,255,.18)" stroke-width="1"/>
+  <rect x="26" y="202" width="50" height="14" rx="4" fill="rgba(200,50,10,.75)" stroke="rgba(255,100,50,.4)" stroke-width="1"/>
+  <text x="51" y="213" text-anchor="middle" fill="#fff" font-size="7.5" font-weight="bold" font-family="'Bebas Neue'" letter-spacing="2">HOLLYWOOD</text>
+  <rect x="30" y="220" width="38" height="6" rx="1" fill="rgba(0,0,0,.55)" stroke="rgba(255,200,100,.3)" stroke-width="1"/>
+  <rect x="32" y="221" width="5" height="4" fill="rgba(255,255,255,.15)"/>
+  <rect x="39" y="221" width="5" height="4" fill="rgba(255,255,255,.15)"/>
+  <rect x="46" y="221" width="5" height="4" fill="rgba(255,255,255,.15)"/>
+  <rect x="53" y="221" width="5" height="4" fill="rgba(255,255,255,.15)"/>
+  <text x="54" y="244" text-anchor="middle" fill="#2a1000" font-size="12" font-weight="900" font-family="'Noto Sans JP'" stroke="#ffe082" stroke-width="4" paint-order="stroke">🎬 ハリウッドエリア</text>
 </g>
 
 <g class="blk" data-id="newyork" onclick="sel(this)">
-  <polygon class="top" points="28,166 42,116 84,81 122,48 170,32 180,80 160,106 137,118 110,140 92,155 87,188 62,178" fill="url(#gNY)" stroke="rgba(180,140,240,0.5)" stroke-width="1.5" filter="url(#sh)"/>
-  <!-- 自由の女神 -->
-  <rect x="90" y="114" width="8" height="24" fill="#5c6bc0" filter="url(#shB)"/>
-  <polygon points="86,114 94,100 102,114" fill="#7986cb"/>
-  <path d="M88,108 Q94,102 100,108" fill="none" stroke="#FFD700" stroke-width="1.5"/>
-  <!-- スカイライン -->
-  <rect x="60" y="140" width="12" height="30" fill="rgba(70,60,140,0.5)"/>
-  <rect x="74" y="132" width="10" height="38" fill="rgba(80,70,160,0.5)"/>
-  <rect x="115" y="128" width="14" height="36" fill="rgba(70,60,140,0.5)"/>
+  <polygon points="28,166 42,116 84,81 122,48 170,32 180,80 160,106 137,118 110,140 92,155 87,188 62,178" fill="#1a1060" transform="translate(3,9)" opacity="0.88"/>
+  <polygon class="top" points="28,166 42,116 84,81 122,48 170,32 180,80 160,106 137,118 110,140 92,155 87,188 62,178" fill="url(#gNY)" stroke="rgba(180,140,240,.5)" stroke-width="1.5" filter="url(#sh)"/>
+  <polygon points="28,166 42,116 84,81 122,48 170,32 180,80 160,106 137,118 110,140 92,155 87,188 62,178" fill="none" stroke="rgba(255,255,255,.18)" stroke-width="1"/>
+  <rect x="89" y="110" width="10" height="27" fill="#5c6bc0" filter="url(#shB)"/>
+  <polygon points="84,110 94,93 104,110" fill="#7986cb"/>
+  <path d="M88,104 Q94,98 100,104" fill="none" stroke="rgba(255,215,0,.65)" stroke-width="2"/>
+  <line x1="94" y1="93" x2="94" y2="85" stroke="#7986cb" stroke-width="2"/>
+  <ellipse cx="94" cy="84" rx="3" ry="2" fill="rgba(255,200,0,.85)"/>
+  <rect x="55" y="137" width="14" height="36" fill="rgba(60,50,130,.6)"/>
+  <rect x="70" y="128" width="12" height="45" fill="rgba(70,60,150,.6)"/>
+  <rect x="113" y="124" width="16" height="42" fill="rgba(60,50,130,.6)"/>
+  <rect x="57" y="140" width="3" height="3" fill="rgba(255,240,180,.35)"/>
+  <rect x="62" y="140" width="3" height="3" fill="rgba(255,240,180,.3)"/>
+  <rect x="72" y="132" width="3" height="3" fill="rgba(255,240,180,.4)"/>
+  <rect x="77" y="132" width="3" height="3" fill="rgba(255,240,180,.3)"/>
   <text x="106" y="96" text-anchor="middle" fill="#fff" font-size="12" font-weight="900" font-family="'Noto Sans JP'" stroke="#0d0030" stroke-width="4" paint-order="stroke">🗽 ニューヨークエリア</text>
 </g>
 
 <g class="blk" data-id="entrance" onclick="sel(this)">
-  <rect class="top" x="22" y="330" width="62" height="52" rx="10" fill="url(#gEnt)" stroke="rgba(255,200,50,0.5)" stroke-width="1.5" filter="url(#sh)"/>
-  <!-- 地球儀 -->
-  <circle cx="53" cy="308" r="14" fill="#1565c0" stroke="#64b5f6" stroke-width="1.5" filter="url(#shB)"/>
-  <ellipse cx="53" cy="308" rx="14" ry="6" fill="none" stroke="#90caf9" stroke-width="1"/>
-  <line x1="53" y1="294" x2="53" y2="322" stroke="#90caf9" stroke-width="1"/>
-  <text x="53" y="313" text-anchor="middle" fill="#fff" font-size="11" font-family="'Noto Sans JP'">🌍</text>
+  <rect x="22" y="330" width="62" height="52" rx="10" fill="#6a3000" transform="translate(3,9)" opacity="0.88"/>
+  <rect class="top" x="22" y="330" width="62" height="52" rx="10" fill="url(#gEnt)" stroke="rgba(255,200,50,.5)" stroke-width="1.5" filter="url(#sh)"/>
+  <rect x="22" y="330" width="62" height="52" rx="10" fill="none" stroke="rgba(255,255,255,.18)" stroke-width="1"/>
+  <circle cx="53" cy="308" r="16" fill="#1565c0" stroke="#64b5f6" stroke-width="1.8" filter="url(#shB)"/>
+  <ellipse cx="53" cy="308" rx="16" ry="7" fill="none" stroke="#90caf9" stroke-width="1.2"/>
+  <ellipse cx="53" cy="308" rx="11" ry="16" fill="none" stroke="#90caf9" stroke-width="0.8"/>
+  <line x1="53" y1="292" x2="53" y2="324" stroke="#90caf9" stroke-width="1"/>
+  <ellipse cx="47" cy="302" rx="5" ry="4" fill="rgba(255,255,255,.2)" transform="rotate(-20,47,302)"/>
   <text x="53" y="362" text-anchor="middle" fill="#fff" font-size="12" font-weight="900" font-family="'Noto Sans JP'" stroke="#7a2e00" stroke-width="4" paint-order="stroke">🎪 エントランス</text>
 </g>
 
-<!-- 入口への道 -->
+<!-- 入口への道（3D） -->
+<rect x="47" y="386" width="18" height="44" rx="4" fill="#5a3000" opacity="0.5"/>
 <rect x="44" y="382" width="18" height="44" rx="4" fill="#c8a030" opacity="0.55"/>
 <rect x="51" y="382" width="4" height="44" fill="rgba(255,255,255,0.15)"/>
 <text x="53" y="440" text-anchor="middle" fill="#fff" font-size="10" font-family="'Noto Sans JP'" font-weight="700" stroke="#000" stroke-width="3" paint-order="stroke">↓ ユニバーサルシティ駅</text>
@@ -544,13 +583,17 @@ header{
   <text id="pinTxt" x="0" y="0" text-anchor="middle" dominant-baseline="central" font-size="22">📍</text>
 </g>
 
-<!-- コンパス -->
+<!-- コンパス（改良） -->
 <g transform="translate(447,42)">
-  <circle r="21" fill="rgba(0,0,0,0.7)" stroke="rgba(255,215,0,0.3)" stroke-width="1.5"/>
-  <polygon points="0,-14 4,0 0,5 -4,0" fill="#E8341C"/>
-  <polygon points="0,14 4,0 0,-5 -4,0" fill="rgba(255,255,255,0.35)"/>
-  <circle r="3.5" fill="#fff" opacity="0.9"/>
-  <text y="-6" text-anchor="middle" fill="#E8341C" font-size="9" font-weight="bold" font-family="'Bebas Neue'">N</text>
+  <circle r="23" fill="rgba(0,0,0,.78)" stroke="rgba(255,215,0,.38)" stroke-width="1.5"/>
+  <circle r="22" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="1"/>
+  <polygon points="0,-15 4.5,0 0,6 -4.5,0" fill="#E8341C"/>
+  <polygon points="0,15 4.5,0 0,-6 -4.5,0" fill="rgba(255,255,255,.4)"/>
+  <polygon points="-15,0 0,4.5 6,0 0,-4.5" fill="rgba(255,255,255,.2)"/>
+  <polygon points="15,0 0,4.5 -6,0 0,-4.5" fill="rgba(255,255,255,.2)"/>
+  <circle r="4" fill="#fff" opacity="0.95"/>
+  <text y="-8" text-anchor="middle" fill="#E8341C" font-size="9" font-weight="bold" font-family="'Bebas Neue'">N</text>
+  <text y="19" text-anchor="middle" fill="rgba(255,255,255,.35)" font-size="7" font-family="'Bebas Neue'">S</text>
 </g>
 </svg>
 <div class="hint" id="hint">👆 エリアをタップして場所を共有</div>
